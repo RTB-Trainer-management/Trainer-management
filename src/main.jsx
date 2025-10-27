@@ -8,6 +8,10 @@ import { ErrorBoundary } from './ErrorBoundary';
 import store from './redux/store';
 import './index.css'
 import TrainerRegister from './Auth/TrainerSignup';
+import ResetPassword from './Auth/ResetPassword';
+import ChangePassword from './Auth/ChangePassword';
+import CheckEmail from './Auth/CheckEmail';
+import VerifyCode from './Auth/VerifyCode';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -16,7 +20,10 @@ const router = createBrowserRouter(
         <Route path="login" element={<Login />} />
         {/* <Route path="register" element={<Register />} /> */}
         <Route path='trainer-register' element={<TrainerRegister />} />
-
+        <Route path='reset' element={<ResetPassword />} />
+        <Route path='change-password' element={<ChangePassword /> } />
+        <Route path='email' element={<CheckEmail />} />
+        <Route path='verify' element={<VerifyCode />} />
       </Route>
     </>
   )

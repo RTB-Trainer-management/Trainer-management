@@ -31,7 +31,7 @@ const Login = () => {
             />
           </div>
           <div className="text-right">
-            <Link to="/forgot" className="text-[#1D5FAD] text-sm hover:underline">
+            <Link to="/reset" className="text-[#1D5FAD] text-sm hover:underline">
               Forgot password?
             </Link>
           </div>
