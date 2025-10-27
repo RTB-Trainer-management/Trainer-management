@@ -1,10 +1,20 @@
 import { Link } from "react-router-dom";
 import RtbImage from "../assets/rtb.png";
+import { useState } from "react";
 
 const TrainerRegister = () => {
+  const [completedPersonalInfo, setCompletedPersonalInfo] = useState(false);
+
+  const handleCompletePersonalInfo =(e) => {
+    e.preventDefault();
+
+    console.log(completedPersonalInfo);
+    setCompletedPersonalInfo(true);
+  }
+  
   return (
     <div className="min-h-screen w-full bg-[#1D5FAD] flex items-center justify-center">
-      <div className="bg-white w-[850px] rounded-xl shadow-lg px-10 py-8">
+      <div className="bg-white w-[40%] rounded-xl shadow-lg px-10 py-8">
         {/* Header */}
         <div className="flex items-center justify-between">
           <img src={RtbImage} alt="RTB logo" className="w-40 h-auto" />
@@ -20,13 +30,14 @@ const TrainerRegister = () => {
           </div>
         </div>
 
-        {/* Register Progress */}
+        {completedPersonalInfo === false ? 
+        <>
         <div className="mt-6 text-center">
           <h2 className="text-[#1D5FAD] text-2xl font-bold mb-2">REGISTER</h2>
           <div className="">
             <div className="flex justify-center items-center space-x-1">
             <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">1</div>
-              <div className="h-[5px] rounded-xl w-60 bg-gray-300"></div>
+              <div className="h-[5px] rounded-xl w-60 bg-[#1D5FAD]"></div>
               <div className="h-[5px] rounded-xl w-60 bg-gray-300"></div>
               <div className="w-8 h-7 border-2 hover:cursor-pointer border-gray-400 rounded-full"></div>
             </div>
@@ -223,7 +234,7 @@ const TrainerRegister = () => {
           {/* Submit */}
           <div className="flex flex-col items-center mt-8">
             <button
-              type="submit"
+              onClick={handleCompletePersonalInfo}
               className="bg-[#1D5FAD] w-48 text-white py-2 rounded-md hover:bg-[#174f91] transition"
             >
               Next
@@ -238,7 +249,115 @@ const TrainerRegister = () => {
               </Link>
             </p>
           </div>
-        </form>
+        </form> 
+        </>
+        : <>
+          <div className="mt-6 text-center">
+          <h2 className="text-[#1D5FAD] text-2xl font-bold mb-2">REGISTER</h2>
+          <div className="">
+            <div className="flex justify-center items-center space-x-1">
+            <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">1</div>
+              <div className="h-[5px] rounded-xl w-60 bg-[#1D5FAD]"></div>
+              <div className="h-[5px] rounded-xl w-60 bg-[#1D5FAD]"></div>
+              <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">2</div>
+            </div>
+            <div className="flex justify-center items-center space-x-8">
+            <div className="flex items-center block space-x-2">
+                <span className="text-gray-400 font-semibold text-sm">
+                  Personal info
+                </span>
+              </div>
+
+            <div className="flex items-center space-x-2">
+              <span className=" text-[#1D5FAD] font-semibold text-sm">
+                Address info
+              </span>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Form */}
+        <form className="mt-8">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+            {/* Column 1 */}
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">
+                Province
+              </label>
+              <input
+                type="text"
+                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+                placeholder="Firstname"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">
+                District
+              </label>
+              <input
+                type="text"
+                placeholder="Lastname"
+                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">
+                Sector
+              </label>
+              <input
+                type="text"
+                placeholder="07888888888"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">
+                Cell
+              </label>
+              <select className="w-full text-black border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"              >
+                <option value="">Select</option>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-600 font-medium mb-1">
+                Village
+              </label>
+              <input
+                type="email"
+                placeholder="nicoco@gmail.com"
+                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Submit */}
+          <div className="flex flex-col items-center mt-8">
+            <button
+              type="submit"
+              className="bg-[#1D5FAD] w-48 text-white py-2 rounded-md hover:bg-[#174f91] transition"
+            >
+              Register
+            </button>
+            <p className="text-gray-600 text-sm mt-2">
+              Already registered?{" "}
+              <Link
+                to="/login"
+                className="text-[#1D5FAD] font-medium hover:underline"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
+        </form> 
+        </>
+        }
       </div>
     </div>
   );
