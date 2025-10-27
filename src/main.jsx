@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import Login from './Auth/Login';
 import NewUser from './NewUser';
@@ -9,36 +9,47 @@ import Dde from './Auth/Dde';
 import Rtb from './Auth/Rtb';
 import Mayor from './Auth/Mayor';
 import Seo from './Auth/SEO';
+import TrainerRegister from './Auth/TrainerSignup';
+import ResetPassword from './Auth/ResetPassword';
+import ChangePassword from './Auth/ChangePassword';
+import CheckEmail from './Auth/CheckEmail';
+import VerifyCode from './Auth/VerifyCode';
 import { ErrorBoundary } from './ErrorBoundary';
 import store from './redux/store';
-import './index.css'
+import './index.css';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="/" element={<NewUser />}>
         <Route path="login" element={<Login />} />
-         <Route path="school-management" element={<Signup />} /> 
-          <Route path="Dde" element={<Dde />} /> 
-          <Route path="Rtb" element={<Rtb />} />
-          <Route path="Mayor" element={<Mayor />} /> 
-        <Route path="Seo" element={<Seo />} /> 
+        <Route path="school-management" element={<Signup />} />
+        <Route path="dde" element={<Dde />} />
+        <Route path="rtb" element={<Rtb />} />
+        <Route path="mayor" element={<Mayor />} />
+        <Route path="seo" element={<Seo />} />
+        <Route path="trainer-register" element={<TrainerRegister />} />
+        <Route path="reset" element={<ResetPassword />} />
+        <Route path="change-password" element={<ChangePassword />} />
+        <Route path="email" element={<CheckEmail />} />
+        <Route path="verify" element={<VerifyCode />} />
       </Route>
     </>
   )
 );
 
 const rootElement = document.getElementById('root');
+
 if (!rootElement._reactRootContainer) {
   const root = ReactDOM.createRoot(rootElement);
   rootElement._reactRootContainer = root;
   root.render(
     <ErrorBoundary>
       <Provider store={store}>
-          <RouterProvider router={router} />
+        <RouterProvider router={router} />
       </Provider>
     </ErrorBoundary>
   );
 } else {
-  console.warn('main.jsx: createRoot already called, skipping'); // Debug
+  console.warn('main.jsx: createRoot already called, skipping');
 }
