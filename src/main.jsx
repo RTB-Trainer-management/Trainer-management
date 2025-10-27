@@ -1,10 +1,35 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import Login from './Auth/Login';
+import NewUser from './NewUser';
+import { ErrorBoundary } from './ErrorBoundary';
+import store from './redux/store';
 import './index.css'
-import App from './App.jsx'
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route path="/" element={<NewUser />}>
+        <Route path="login" element={<Login />} />
+        {/* <Route path="register" element={<Register />} /> */}
+      </Route>
+    </>
+  )
+);
+
+const rootElement = document.getElementById('root');
+if (!rootElement._reactRootContainer) {
+  const root = ReactDOM.createRoot(rootElement);
+  rootElement._reactRootContainer = root;
+  root.render(
+    <ErrorBoundary>
+      <Provider store={store}>
+          <RouterProvider router={router} />
+      </Provider>
+    </ErrorBoundary>
+  );
+} else {
+  console.warn('main.jsx: createRoot already called, skipping'); // Debug
+}

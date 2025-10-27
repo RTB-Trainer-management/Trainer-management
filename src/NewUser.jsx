@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const App = () => {
+const NewUser = () => {
   return (
     <div>
       <ToastContainer />
@@ -14,4 +14,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default NewUser;
