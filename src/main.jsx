@@ -7,6 +7,7 @@ import NewUser from './NewUser';
 import { ErrorBoundary } from './ErrorBoundary';
 import store from './redux/store';
 import './index.css'
+import TrainerRegister from './Auth/TrainerSignup';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -14,6 +15,8 @@ const router = createBrowserRouter(
       <Route path="/" element={<NewUser />}>
         <Route path="login" element={<Login />} />
         {/* <Route path="register" element={<Register />} /> */}
+        <Route path='trainer-register' element={<TrainerRegister />} />
+
       </Route>
     </>
   )
