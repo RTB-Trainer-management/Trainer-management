@@ -24,7 +24,7 @@ const TrainerRegister = () => {
         <div className="mt-6 text-center">
           <h2 className="text-[#1D5FAD] text-2xl font-bold mb-2">REGISTER</h2>
           <div className="">
-            <div className="flex justify-center items-center space-x-2">
+            <div className="flex justify-center items-center space-x-1">
             <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">1</div>
               <div className="h-[5px] rounded-xl w-60 bg-gray-300"></div>
               <div className="h-[5px] rounded-xl w-60 bg-gray-300"></div>
@@ -56,7 +56,8 @@ const TrainerRegister = () => {
               </label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+                placeholder="Firstname"
               />
             </div>
 
@@ -66,7 +67,8 @@ const TrainerRegister = () => {
               </label>
               <input
                 type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+                placeholder="Lastname"
+                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
               />
             </div>
 
@@ -76,6 +78,7 @@ const TrainerRegister = () => {
               </label>
               <input
                 type="text"
+                placeholder="07888888888"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
               />
             </div>
@@ -84,7 +87,7 @@ const TrainerRegister = () => {
               <label className="block text-gray-600 font-medium mb-1">
                 Gender
               </label>
-              <select className="w-full text-black border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none">
+              <select className="w-full text-black border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"              >
                 <option value="">Select</option>
                 <option>Male</option>
                 <option>Female</option>
@@ -97,6 +100,7 @@ const TrainerRegister = () => {
               </label>
               <input
                 type="email"
+                placeholder="nicoco@gmail.com"
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
               />
             </div>
