@@ -2,15 +2,19 @@ import { Outlet } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SideBar from '../Components/SideBar';
+import TopBar from '../Components/TopBar';
 
 
 const SchoolManagement = () => {
   return (
-    <div>
+    <div> 
       <ToastContainer />
-      <main className='bg-[#EAEAEA]'>
+      <main className='bg-gray-300 flex w-sreen h-screen'>
         <SideBar />
-        <Outlet />
+        <div className='w-full' >
+          <TopBar />
+          <Outlet />
+        </div>
       </main>
     </div>
   );

@@ -7,6 +7,7 @@ import {
 import { GoGraph } from "react-icons/go";
 import { TbListDetails } from "react-icons/tb";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { FaUsersViewfinder } from "react-icons/fa6"
 import { Link } from "react-router-dom";
 import RtbImage from "../assets/rtb.png";
 
@@ -25,7 +26,6 @@ const SideBar = () => {
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      {/* ---- Logo ---- */}
       <div className="flex justify-center mt-[3rem] items-center py-6 border-b border-gray-300">
         <img
           src={RtbImage}
@@ -34,7 +34,6 @@ const SideBar = () => {
         />
       </div>
 
-      {/* ---- Nav Items ---- */}
       <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
         <NavItem
           to="/"
@@ -43,10 +42,9 @@ const SideBar = () => {
           collapsed={collapsed}
         />
 
-        {/* Recruitment */}
         <CollapsibleItem
           title="Recruitments"
-          icon={<GoGraph size={22} />}
+          icon={<FaUsersViewfinder size={22} />}
           collapsed={collapsed}
           isOpen={openMenu === "recruitment"}
           toggle={() => toggleMenu("recruitment")}
@@ -56,7 +54,6 @@ const SideBar = () => {
           ]}
         />
 
-        {/* Performance */}
         <CollapsibleItem
           title="Performance"
           icon={<GoGraph size={22} />}
@@ -64,13 +61,12 @@ const SideBar = () => {
           isOpen={openMenu === "performance"}
           toggle={() => toggleMenu("performance")}
           items={[
-            { to: "/performance/performance", label: "Performance" },
+            { to: "/performance", label: "Performance" },
             { to: "/performance/promotion", label: "Promotion" },
             { to: "/performance/my-performance", label: "My Performance" },
           ]}
         />
 
-        {/* Payment */}
         <CollapsibleItem
           title="Payments"
           icon={<FaFileInvoiceDollar size={22} />}
@@ -84,7 +80,6 @@ const SideBar = () => {
         />
       </nav>
 
-      {/* ---- Logout ---- */}
       <div className="px-4 pb-6 border-t border-gray-300">
         <button className="w-full flex items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-300 transition-colors">
           <FaSignOutAlt className="text-gray-700" size={22} />
@@ -92,7 +87,6 @@ const SideBar = () => {
         </button>
       </div>
 
-      {/* ---- Collapse Toggle ---- */}
       <button
         onClick={toggleSidebar}
         className="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white border border-gray-300 rounded-full p-1 shadow-md hover:bg-gray-50"
@@ -103,7 +97,6 @@ const SideBar = () => {
   );
 };
 
-/* ---------------------- Helper Components ---------------------- */
 const NavItem = ({ to, icon, label, collapsed }) => (
   <Link
     to={to}

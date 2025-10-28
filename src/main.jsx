@@ -20,6 +20,7 @@ import './index.css';
 import SchoolManagement from './School Manager/SchoolManagement';
 import Trainers from './Trainers/Trainers';
 import Dashboard from './School Manager/Dashboard';
+import Performance from './School Manager/Perfomance';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,6 +41,7 @@ const router = createBrowserRouter(
 
       <Route path='/' element={<SchoolManagement />} >
         <Route path='' element={<Dashboard />} />
+        <Route path='performance' element={<Performance />} />
       </Route>
 
       <Route path='/trainer' element={<Trainers />} >
