@@ -34,6 +34,14 @@ const router = createBrowserRouter(
         <Route path="email" element={<CheckEmail />} />
         <Route path="verify" element={<VerifyCode />} />
       </Route>
+
+      <Route path='' element={<SchoolManagement />} >
+        <Route path='' element={<Dashboard />} />
+      </Route>
+
+      <Route path='/trainer' element={<SchoolManagement />} >
+        <Route path='' element={<Dashboard />} />
+      </Route>
     </>
   )
 );
