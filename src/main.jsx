@@ -17,11 +17,14 @@ import VerifyCode from './Auth/VerifyCode';
 import { ErrorBoundary } from './ErrorBoundary';
 import store from './redux/store';
 import './index.css';
+import SchoolManagement from './School Manager/SchoolManagement';
+import Trainers from './Trainers/Trainers';
+import Dashboard from './School Manager/Dashboard';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="/" element={<NewUser />}>
+      <Route path="/user" element={<NewUser />}>
         <Route path="login" element={<Login />} />
         <Route path="school-management" element={<Signup />} />
         <Route path="dde" element={<Dde />} />
@@ -35,11 +38,11 @@ const router = createBrowserRouter(
         <Route path="verify" element={<VerifyCode />} />
       </Route>
 
-      <Route path='' element={<SchoolManagement />} >
+      <Route path='/' element={<SchoolManagement />} >
         <Route path='' element={<Dashboard />} />
       </Route>
 
-      <Route path='/trainer' element={<SchoolManagement />} >
+      <Route path='/trainer' element={<Trainers />} >
         <Route path='' element={<Dashboard />} />
       </Route>
     </>
