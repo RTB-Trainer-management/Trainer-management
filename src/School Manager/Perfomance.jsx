@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { FaRegEye } from "react-icons/fa";
+import { FaPen, FaRegEye } from "react-icons/fa";
 
 const Performance = () => {
   const [activeTab, setActiveTab] = useState("Rejected");
   const [openView, setOpenView] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [selectedTrainer, setSelectedTrainer] = useState(null);
+  const [nextAllowed, setNextAllowed] = useState(false);
 
   const data = [
     { trainer: "John Doe", rate: "76%", status: "Rejected", message: "You have not uploaded your national ID transcript" },
@@ -16,17 +18,27 @@ const Performance = () => {
     setOpenView(true);
   };
 
+  const handleOpenEdit = (trainer) => {
+    setSelectedTrainer(trainer);
+    setOpenEdit(true);
+  }
+
+  const handleOpenExibitedBehavior = () => {
+
+  }
+ 
   return (
     <div>
-      {openView ? (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+      {openView || openEdit ? (
+        <div className="fixed inset-0 flex items-center overflow-scroll-x justify-center bg-black/50 bg-opacity-40 z-50">
           <div className="bg-white rounded-lg shadow-lg w-[700px]">
             {/* Header */}
             <div className="bg-[#1D5FAD] text-white font-semibold text-center py-3 rounded-t-lg">
-              Trainers Performance Information
+              {openEdit ? "Performance Edit" : "Trainers Performance Information"}
             </div>
 
-            {/* Body */}
+            {openView && <>
+              {/* Body */}
             <div className="flex justify-between p-6 text-gray-800">
               {/* Left */}
               <div className="w-[45%] border-r pr-4">
@@ -53,21 +65,71 @@ const Performance = () => {
                   rows="3"
                   placeholder="Enter response..."
                 ></textarea>
-                <button className="mt-3 px-5 py-2 bg-[#1D5FAD] text-white rounded-md text-sm hover:bg-blue-700 transition">
+                <button className="mt-3 px-5 py-2 bg-[#1D5FAD] cursor-pointer text-white rounded-md text-sm hover:bg-blue-700 transition">
                   Respond
                 </button>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="flex justify-end border-t p-3">
+            <div className="flex justify-end border-t mr-5 p-3">
               <button
-                onClick={() => setOpenView(false)}
-                className="text-gray-500 hover:text-red-600 transition text-sm font-medium"
+                onClick={() => {setOpenView(false) || setOpenEdit(false)}}
+                className="text-gray-500 cursor-pointer hover:text-red-600 transition text-sm font-medium"
               >
                 ✕ Close
               </button>
             </div>
+            </>}
+
+            {openEdit && 
+            <>
+              <div className="flex justify-center my-[3rem] items-center space-x-1">
+            <div className="bg-[#1D5FAD] rounded-full w-8 hover:bg-white hover:text-gray-800 cursor-pointer pt-1 pl-3 font-semibold  h-8">1</div>
+              <div className="h-[5px] rounded-xl w-40 bg-[#1D5FAD]"></div>
+              <div className="h-[5px] rounded-xl w-40 bg-gray-300"></div>
+              <div className="hover:bg-[#1D5FAD] rounded-full w-8 text-gray-800 hover:text-white cursor-pointer pt-1 pl-3 font-semibold  h-8">2</div>
+            </div>
+            <div className="flex justify-center items-center space-x-20">
+            <div className="flex mr-[2rem] items-center block space-x-2">
+                <span className="text-[#1D5FAD] font-semibold text-sm">
+                  Expected Results
+                </span>
+              </div>
+
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-400 font-semibold text-sm">
+                Exhibited Behaviour
+              </span>
+            </div>
+            </div>
+            <div className="grid my-[3rem]">
+              <div className="flex w-[100%] justify-between">
+                <div className="ml-[10rem]">
+                  <h3 className="text-[#1D5FAD]">Title</h3>
+                </div>
+                <div className="text-center mr-[10rem]">
+                  <h3 className="text-[#1D5FAD]">Score</h3>
+                </div>
+              </div>
+
+              {[0,1,2,3].map(() => (
+                <div className="flex w-[100%]  my-[1rem] justify-between">
+                <div className="ml-[10rem] text-gray-800 w-[20rem] py-2 rounded-xl h-[4rem] bg-gray-300 px-[5rem]">
+                  Preparation T/L materials
+                </div>
+                <input type="text" className="text-center w-[50px] h-[3rem] border border-gray-800 rounded-xl bg-blue mr-[10rem]" />
+              </div>
+              ))}
+            </div>
+
+            <div>
+              <button onClick={handleOpenExibitedBehavior} className={`${nextAllowed ? "text-white":"text-black"}`}>
+                Next
+              </button>
+            </div>
+            </>
+            }
           </div>
         </div>
       ) : (
@@ -105,6 +167,7 @@ const Performance = () => {
                   <th className="py-3 px-6 font-medium">Trainers</th>
                   <th className="py-3 px-6 font-medium">Rate</th>
                   <th className="py-3 px-6 font-medium text-center">View</th>
+                  <th className="py-3 px-6 font-medium text-center">Edit</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,6 +183,12 @@ const Performance = () => {
                     <td className="py-3 px-6 text-center">
                       <FaRegEye
                         onClick={() => handleView(item)}
+                        className="mx-auto text-gray-600 hover:text-[#1D5FAD] cursor-pointer"
+                      />
+                    </td>
+                    <td className="py-3 px-6 text-center">
+                      <FaPen
+                        onClick={() => handleOpenEdit(item)}
                         className="mx-auto text-gray-600 hover:text-[#1D5FAD] cursor-pointer"
                       />
                     </td>
