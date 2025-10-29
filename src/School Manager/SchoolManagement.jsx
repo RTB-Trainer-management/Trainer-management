@@ -9,7 +9,7 @@ const SchoolManagement = () => {
   return (
     <div> 
       <ToastContainer />
-      <main className='bg-gray-300 flex w-sreen h-screen'>
+      <main className='bg-gray-300 flex w-screen h-screen'>
         <SideBar />
         <div className='w-full' >
           <TopBar />

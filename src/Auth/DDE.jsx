@@ -10,7 +10,7 @@ const Dde= () => {
 
         <div className="text-[#868585] text-sm font-medium flex items-center justify-center space-x-4 mb-10">
   <Link to="/" className="hover:text-[#1D5FAD]">Trainer</Link>
-  <span>.</span>
+  <span className=''>.</span>
   <Link to="/school-management" >School Manager</Link>
   <span>.</span>
   <Link to="/mayor" className="hover:text-[#1D5FAD]">Mayor</Link>
