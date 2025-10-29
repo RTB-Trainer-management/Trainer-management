@@ -26,7 +26,7 @@ const SideBar = () => {
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      <div className="flex justify-center mt-[3rem] items-center py-6 border-b border-gray-300">
+      <div className="flex justify-center mt-12 items-center py-6 border-b border-gray-300">
         <img
           src={RtbImage}
           alt="RTB Logo"
