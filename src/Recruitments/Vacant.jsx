@@ -1,29 +1,64 @@
-import { useState } from "react";
-import { FaRegEye } from "react-icons/fa";
+import { act, useState } from "react";
+import { FaRegEye, FaToggleOff, FaToggleOn } from "react-icons/fa";
 import { FaPen } from "react-icons/fa6";
-import { FiToggleRight } from "react-icons/fi";
+import { FiX,FiToggleRight } from "react-icons/fi";
+
 
 const Vacant = () => {
-  const [activeTab, setActiveTab] = useState("Unverified");
+  const [activeTab, setActiveTab] = useState("Pending");
 
-  const data = [
-    { ShoolName: "Rwanda Coding Academy ", District:"Nyabihu",Trade:"Culinary Arts",Qualifications:"A0",Trainers:"2",Position:"Matron"  },
-    { ShoolName: "Rwanda Coding Academy ", District:"Nyabihu",Trade:"Culinary Arts",Qualifications:"A0",Trainers:"2",Position:"Matron"  },
-     { ShoolName: "Rwanda Coding Academy ", District:"Nyabihu",Trade:"Culinary Arts",Qualifications:"A0",Trainers:"2",Position:"Matron"  }, 
-     { ShoolName: "Rwanda Coding Academy ", District:"Nyabihu",Trade:"Culinary Arts",Qualifications:"A0",Trainers:"2",Position:"Matron"  },
+  const pendingData = [
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" }
   ];
-
+    const approvedData = [
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" }
+  ];
+      const rejectedData = [
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" }
+  ];
+      const appealedData = [
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: "Rwanda Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" }
+  ];
+        const allpostsData = [
+    { ShoolName: " Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: " Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: " Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" },
+    { ShoolName: " Coding Academy", District: "Nyabihu", Trade: "Culinary Arts", Qualifications: "A0", Trainers: "2", Position: "Matron" }
+  ];
+const data=activeTab=="Pending"?pendingData:activeTab=="Approved"?approvedData:activeTab=="Rejected"?rejectedData:activeTab=="Appealed"?appealedData:activeTab=="All Posts"?allpostsData:[];
   return (
-    <div className="p-4 bg-gray-50 min-h-screen text-gray-800">
+    <div className="bg-gray-50 py-2 min-h-screen text-gray-800 w-full">
       {/* Header */}
-      <div className="bg-gray-200 py-4 text-center text-sm font-medium text-gray-700">
-        Trainers’ Performance
-      </div>
+<div className="flex justify-between items-center gap-2 mb-4 ">
+  {/* Title */}
+  <div className="text-sm font-medium py-1.5 text-center rounded  bg-gray-200 text-gray-700 w-280">
+    Vacant Posts
+  </div>
+
+  {/* Button */}
+  <button className="bg-blue-500 text-white text-sm px-2 py-2  rounded-lg hover:bg-blue-600 transition mr-10">
+    Post a Vacancy
+  </button>
+</div>
+
+
 
       {/* Tabs and Year */}
-      <div className="flex justify-between items-center bg-white px-4 py-4 mt-3 rounded-md shadow-sm">
-        <div className="flex bg-gray-100 rounded-full p-1">
-          {["Pending", "Unverified"].map((tab) => (
+      <div className="flex justify-between items-center text-gray-600 bg-white px-8 py-4 mt-3 rounded-md ">
+        <div className="flex bg-gray-100 rounded-full ">
+          {["Pending", "Approved","Rejected","Appealed","All Posts"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -38,58 +73,154 @@ const Vacant = () => {
           ))}
         </div>
 
-        <div className="border rounded-md px-4 py-1 text-sm text-gray-700">
-          2021 - 2022
+        <div className="border rounded-md px-4 py-1 w-30 text-sm text-gray-600">
+          Filter 
         </div>
       </div>
 
       {/* Table */}
-    <div className="mt-6 w-full overflow-x-auto">
-  <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-sm">
+      <div className="mt-6 w-full overflow-x-auto px-10 rounded-2xl text-sm">
+        <table className="min-w-full bg-white rounded-lg border-separate border-spacing-y-3 overflow-hidden ">
           <thead>
-            <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left">
-              <th className="py-3 px-6 font-medium">
-                <input type="text" className="mr-0 accent-[#1D5FAD]" />
-                School Name
-              </th>
-              
-              <th className="py-3 px-6 font-medium text-center">District</th>
-              <th className="py-3 px-6 font-medium text-center">Trade</th>
-              <th className="py-3 px-6 font-medium text-center">Qualification</th>
-              <th className="py-3 px-6 font-medium text-center">Trainers</th>
-              <th className="py-3 px-6 font-medium text-center">Position</th>
-              <th className="py-3 px-6 font-medium text-center">View</th>
-              <th className="py-3 px-6 font-medium text-center">Edit</th>
-              <th className="py-3 px-6 font-medium text-center">Remove</th>
+            {activeTab === "Pending" && (
+            <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left ">
+              <th className="py-3 px-3 font-medium">School Name</th>
+              <th className="py-3 px-3 font-medium text-center">District</th>
+              <th className="py-3 px-3 font-medium text-center">Trade</th>
+              <th className="py-3 px-3 font-medium text-center">Qualification</th>
+              <th className="py-3 px-3 font-medium text-center">Trainers</th>
+              <th className="py-3 px-3 font-medium text-center">Position</th>
+              <th className="py-3 px-3 font-medium text-center">View</th>
+              <th className="py-3 px-3 font-medium text-center">Edit</th>
+              <th className="py-3 px-3 font-medium text-center">Remove</th>
             </tr>
+            )}
+                 {activeTab === "Approved" && (
+            <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left ">
+              <th className="py-3 px-3 font-medium">School Name</th>
+              <th className="py-3 px-3 font-medium text-center">District</th>
+              <th className="py-3 px-3 font-medium text-center">Trade</th>
+              <th className="py-3 px-3 font-medium text-center">Qualification</th>
+              <th className="py-3 px-3 font-medium text-center">Trainers</th>
+              <th className="py-3 px-3 font-medium text-center">Position</th>
+              <th className="py-3 px-3 font-medium text-center">View</th>
+          
+            </tr>
+            )}
+              {activeTab === "Rejected" && (
+    <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left mb-2">
+      <th className="py-3 px-3 font-medium">School Name</th>
+      <th className="py-3 px-3 font-medium text-center">District</th>
+      <th className="py-3 px-3 font-medium text-center">Trade</th>
+      <th className="py-3 px-3 font-medium text-center">Qualification</th>
+      <th className="py-3 px-3 font-medium text-center">Trainers</th>
+      <th className="py-3 px-3 font-medium text-center">Position</th>
+      <th className="py-3 px-3 font-medium text-center">View</th>
+      <th className="py-3 px-3 font-medium text-center">Appeal</th>
+
+    </tr>
+  )}
+               {activeTab === "Appealed" && (
+            <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left ">
+              <th className="py-3 px-3 font-medium">School Name</th>
+              <th className="py-3 px-3 font-medium text-center">District</th>
+              <th className="py-3 px-3 font-medium text-center">Trade</th>
+              <th className="py-3 px-3 font-medium text-center">Qualification</th>
+              <th className="py-3 px-3 font-medium text-center">Trainers</th>
+              <th className="py-3 px-3 font-medium text-center">Position</th>
+              <th className="py-3 px-3 font-medium text-center">View</th>
+              <th className="py-3 px-3 font-medium text-center">Appeal</th>
+            </tr>
+            )}
+            
+               {activeTab === "All Posts" && (
+            <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left ">
+              <th className="py-3 px-3 font-medium">School Name</th>
+              <th className="py-3 px-3 font-medium text-center">District</th>
+              <th className="py-3 px-3 font-medium text-center">Trade</th>
+              <th className="py-3 px-3 font-medium text-center">Qualification</th>
+              <th className="py-3 px-3 font-medium text-center">Trainers</th>
+              <th className="py-3 px-3 font-medium text-center">Position</th>
+              <th className="py-3 px-3 font-medium text-center">View</th>
+            </tr>
+            )}
+            
           </thead>
           <tbody>
-            {data.map((item, index) => (
-              <tr
-                key={index}
-                className={`${
-                  index % 2 === 0 ? "bg-gray-50" : "bg-[#F5F9FF]"
-                } hover:bg-gray-100 transition-colors`}
-              >
-                <td className="py-3 px-6">
-                  <input type="text" className="mr-0 accent-[#1D5FAD]" />
-                  {item.ShoolName}
-                </td>
-                <td className="py-3 px-6">{item.District}</td>
-                <td className="py-3 px-6">{item.Trade}</td>
-                <td className="py-3 px-6">{item.Qualifications}</td>
-                <td className="py-3 px-6">{item.Trainers}</td>
-                <td className="py-3 px-6">{item.Position}</td>
-                <td></td>
-              
-              </tr>
-            ))}
+              {activeTab === "Approved" &&
+               pendingData.map((item, index) => (
+                 <tr key={index} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-[#F5F9FF]"} hover:bg-gray-200`}>
+                   <td className="py-3 px-3">{item.ShoolName}</td>
+                   <td className="py-3 px-3 text-center">{item.District}</td>
+                   <td className="py-3 px-3 text-center">{item.Trade}</td>
+                   <td className="py-3 px-3 text-center">{item.Qualifications}</td>
+                   <td className="py-3 px-3 text-center">{item.Trainers}</td>
+                   <td className="py-3 px-3 text-center">{item.Position}</td>
+                   <td className="py-3 px-3 text-center"><FaRegEye className="mx-auto" /></td>
+
+                 </tr>
+               ))}
+             {activeTab === "Pending" &&
+               pendingData.map((item, index) => (
+                 <tr key={index} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-[#F5F9FF]"} hover:bg-gray-200`}>
+                   <td className="py-3 px-3">{item.ShoolName}</td>
+                   <td className="py-3 px-3 text-center">{item.District}</td>
+                   <td className="py-3 px-3 text-center">{item.Trade}</td>
+                   <td className="py-3 px-3 text-center">{item.Qualifications}</td>
+                   <td className="py-3 px-3 text-center">{item.Trainers}</td>
+                   <td className="py-3 px-3 text-center">{item.Position}</td>
+                   <td className="py-3 px-3 text-center"><FaRegEye className="mx-auto" /></td>
+                   <td className="py-3 px-3 text-center"><FaPen className="mx-auto" /></td>
+                   <td className="py-3 px-3 text-center text-red-600"><FiX className="mx-auto" /></td>
+                 </tr>
+               ))}
+                 {activeTab === "Rejected" &&
+    pendingData.map((item, index) => (
+      <tr key={index} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-[#F5F9FF]"} hover:bg-gray-200`}>
+        <td className="py-3 px-3">{item.ShoolName}</td>
+        <td className="py-3 px-3 text-center">{item.District}</td>
+        <td className="py-3 px-3 text-center">{item.Trade}</td>
+        <td className="py-3 px-3 text-center">{item.Qualifications}</td>
+        <td className="py-3 px-3 text-center">{item.Trainers}</td>
+        <td className="py-3 px-3 text-center">{item.Position}</td>
+        <td className="py-3 px-3 text-center"><FaRegEye className="mx-auto  "/></td>
+        <td className="py-3 px-3 text-center"><FaToggleOff className="mx-auto text-[#1D5FAD] "/></td>
+       
+      </tr>
+    ))}
+                     {activeTab === "Appealed" &&
+    appealedData.map((item, index) => (
+      <tr key={index} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-[#F5F9FF]"} hover:bg-gray-200`}>
+        <td className="py-3 px-3">{item.ShoolName}</td>
+        <td className="py-3 px-3 text-center">{item.District}</td>
+        <td className="py-3 px-3 text-center">{item.Trade}</td>
+        <td className="py-3 px-3 text-center">{item.Qualifications}</td>
+        <td className="py-3 px-3 text-center">{item.Trainers}</td>
+        <td className="py-3 px-3 text-center">{item.Position}</td>
+        <td className="py-3 px-3 text-center"><FaRegEye className="mx-auto  "/></td>
+        <td className="py-3 px-3 text-center"><FaToggleOn className="mx-auto text-[#1D5FAD] "/></td>
+       
+      </tr>
+    ))}
+                   {activeTab === "All Posts" &&
+    pendingData.map((item, index) => (
+      <tr key={index} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-[#F5F9FF]"} hover:bg-gray-200`}>
+        <td className="py-3 px-3">{item.ShoolName}</td>
+        <td className="py-3 px-3 text-center">{item.District}</td>
+        <td className="py-3 px-3 text-center">{item.Trade}</td>
+        <td className="py-3 px-3 text-center">{item.Qualifications}</td>
+        <td className="py-3 px-3 text-center">{item.Trainers}</td>
+        <td className="py-3 px-3 text-center">{item.Position}</td>
+        <td className="py-3 px-3 text-center"><FaRegEye className="mx-auto  "/></td>
+       
+      </tr>
+    ))}
           </tbody>
         </table>
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 space-x-2">
+      <div className="flex justify-center mt-20 space-x-2">
         {[1, 2, 3, 4, 5].map((num) => (
           <button
             key={num}
@@ -103,14 +234,18 @@ const Vacant = () => {
           </button>
         ))}
       </div>
-
+<footer className="mt-20">
+  <div className="w-full h-0.25 bg-gray-300 mb-4"></div>
       {/* Verify All */}
-      <div className="flex justify-center mt-6">
-        <button className="bg-[#1D5FAD] text-white text-sm px-6 py-2 rounded-md hover:bg-blue-700 transition">
-          Verify All
+      {/* <div className="flex justify-center mt-2 ">
+        <button className="bg-[#ad1d1d] text-white text-sm px-6 py-2 rounded-md hover:bg-blue-700 transition">
+          Remove All
         </button>
-      </div>
+        
+      </div> */}
+      </footer>
     </div>
+    
   );
 };
 
