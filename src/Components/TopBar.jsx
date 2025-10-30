@@ -9,7 +9,7 @@ const TopBar = () => {
   const pathParts = location.pathname.split("/").filter(Boolean);
 
   return (
-    <div className="flex items-center justify-between bg-gray-200 px-6 py-3 mb- shadow-sm border-b">
+    <div className="flex items-center justify-between px-6 bg-white py-3 h-[4rem] mb- shadow-sm border-b">
       {/* Breadcrumb Section */}
       <div className="flex items-center text-sm text-gray-500">
         <span>School Manager</span>

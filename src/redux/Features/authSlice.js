@@ -1,8 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, combineReducers } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
   access_token: null,
+};
+
+const navInitialState = {
+  performance: null,
+  recruitment: null,
+  payment: null
 };
 
 const authSlice = createSlice({
@@ -20,5 +26,18 @@ const authSlice = createSlice({
   },
 });
 
+const navigationSlice = createSlice({
+  name: "nav",
+  initialState: navInitialState,
+  reducers: {
+    updatePerformance: (state, action) => {
+      state.performance = action.payload.newPerformance;
+    }
+  }
+});
+
 export const { setCredentials, logout } = authSlice.actions;
-export default authSlice.reducer;
+export const { updatePerformance } = navigationSlice.actions;
+
+export const authReducer = authSlice.reducer;
+export const navReducer = navigationSlice.reducer;

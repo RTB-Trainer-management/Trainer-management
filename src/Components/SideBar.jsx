@@ -7,17 +7,27 @@ import {
 import { GoGraph } from "react-icons/go";
 import { TbListDetails } from "react-icons/tb";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
-import { FaUsersViewfinder } from "react-icons/fa6"
-import { Link } from "react-router-dom";
+import { FaUsersViewfinder } from "react-icons/fa6";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updatePerformance } from "../redux/Features/authSlice"; // Adjust path
 import RtbImage from "../assets/rtb.png";
 
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [openMenu, setOpenMenu] = useState(null); // Keeps only one menu open
+  const [openMenu, setOpenMenu] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => setCollapsed((c) => !c);
   const toggleMenu = (menuName) => {
     setOpenMenu((prev) => (prev === menuName ? null : menuName));
+  };
+
+  const handleNavUpdate = (to, performanceValue) => {
+    dispatch(updatePerformance({ newPerformance: performanceValue }));
+    localStorage.setItem("nav_performance", performanceValue);
+    navigate('/performance');
   };
 
   return (
@@ -35,12 +45,7 @@ const SideBar = () => {
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
-        <NavItem
-          to="/"
-          icon={<FaHome size={22} />}
-          label="Home"
-          collapsed={collapsed}
-        />
+        <NavItem to="/" icon={<FaHome size={22} />} label="Home" collapsed={collapsed} />
 
         <CollapsibleItem
           title="Recruitments"
@@ -61,10 +66,11 @@ const SideBar = () => {
           isOpen={openMenu === "performance"}
           toggle={() => toggleMenu("performance")}
           items={[
-            { to: "/performance", label: "Performance" },
-            { to: "/performance/promotion", label: "Promotion" },
-            { to: "/performance/my-performance", label: "My Performance" },
+            { to: "", label: "Performance", comp: "performance" },
+            { to: "", label: "Promotion", comp: "promotion" },
+            { to: "", label: "My Performance", comp: "my-performance" },
           ]}
+          onSubItemClick={handleNavUpdate}
         />
 
         <CollapsibleItem
@@ -109,7 +115,7 @@ const NavItem = ({ to, icon, label, collapsed }) => (
   </Link>
 );
 
-const CollapsibleItem = ({ title, icon, collapsed, isOpen, toggle, items }) => (
+const CollapsibleItem = ({ title, icon, collapsed, isOpen, toggle, items, onSubItemClick }) => (
   <div>
     <button
       onClick={toggle}
@@ -131,21 +137,38 @@ const CollapsibleItem = ({ title, icon, collapsed, isOpen, toggle, items }) => (
     {!collapsed && isOpen && (
       <div className="ml-8 mt-1 space-y-1">
         {items.map((item, index) => (
-          <SubItem key={index} to={item.to} label={item.label} />
+          <SubItem
+            key={index}
+            to={item.to}
+            label={item.label}
+            comp={item.comp}
+            onClick={onSubItemClick}
+          />
         ))}
       </div>
     )}
   </div>
 );
 
-const SubItem = ({ to, label }) => (
-  <Link
-    to={to}
-    className="flex items-center gap-2 py-2 px-3 rounded-md text-sm hover:bg-gray-200 text-gray-700 transition-colors"
-  >
-    <TbListDetails size={18} />
-    <span>{label}</span>
-  </Link>
-);
+const SubItem = ({ to, label, comp, onClick }) => {
+  const handleClick = () => {
+    if (onClick && comp) {
+      onClick(to, comp); // Pass route and value
+    } else {
+      // For non-performance items, just navigate
+      window.location.href = to;
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="w-full cursor-pointer flex items-center gap-2 py-2 px-3 rounded-md text-sm hover:bg-gray-200 text-gray-700 transition-colors text-left"
+    >
+      <TbListDetails size={18} />
+      <span>{label}</span>
+    </button>
+  );
+};
 
 export default SideBar;
