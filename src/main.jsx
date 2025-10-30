@@ -22,6 +22,8 @@ import Trainers from './Trainers/Trainers';
 import Dashboard from './School Manager/Dashboard';
 import Performance from './School Manager/Perfomance';
 import Vacant from './Recruitments/Vacant';
+import Trainers2 from './Recruitments/Trainers';
+import Transfers from './Recruitments/Transfers';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,8 +45,12 @@ const router = createBrowserRouter(
       <Route path='/' element={<SchoolManagement />} >
         <Route path='' element={<Dashboard />} />
         <Route path='performance' element={<Performance />} />
-        <Route path='vacant-posts' element={<Vacant />} />
+
+        <Route path='/recruitments/vacant-posts' element={<Vacant />} />
+        <Route path='/recruitments/trainers' element={<Trainers2 />} />
+       < Route path='/recruitments/transfers' element={<Transfers />} />
       </Route>
+
 
       <Route path='/trainers' element={<Trainers />} >
         <Route path='' element={<Dashboard />} />

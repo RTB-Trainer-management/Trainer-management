@@ -32,7 +32,7 @@ const SideBar = () => {
 
   return (
     <aside
-      className={`h-screen text-gray-800 shadow-md flex flex-col transition-all duration-300 ${
+      className={`h-screen bg-gray-200 text-gray-600 shadow-md flex flex-col transition-all duration-300 ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
@@ -54,8 +54,9 @@ const SideBar = () => {
           isOpen={openMenu === "recruitment"}
           toggle={() => toggleMenu("recruitment")}
           items={[
-            { to: "/recruitment/openings", label: "Job Openings" },
-            { to: "/recruitment/applicants", label: "Applicants" },
+            { to: "/recruitments/transfers", label: "Transfers" },
+            { to: "/recruitments/trainers", label: "Trainers" },
+            { to: "/recruitments/vacant-posts", label: "Vacant Posts" }
           ]}
         />
 

@@ -9,17 +9,19 @@ const TopBar = () => {
   const pathParts = location.pathname.split("/").filter(Boolean);
 
   return (
-    <div className="flex items-center justify-between px-6 bg-white py-3 h-[4rem] mb- shadow-sm border-b">
-      {/* Breadcrumb Section */}
-      <div className="flex items-center text-sm text-gray-500">
+
+    <div className="flex items-center justify-between  bg-white px-10 py-6 shadow-sm border-b">
+
+
+    
+      <div className="flex items-center text-sm text-gray-500 ">
         <span>School Manager</span>
         
 
         {pathParts.map((part, index) => (
           <div key={index} className="flex items-center">
             <span className="mx-2 text-gray-400">/</span>
-            <span>Dashboard</span>
-            <span className="mx-2 text-gray-400">/</span>
+          
             <span
               className={`${
                 index === pathParts.length - 1
@@ -54,7 +56,8 @@ const TopBar = () => {
           className="w-8 h-8 rounded-full object-cover border border-gray-300 cursor-pointer"
         />
       </div>
-    </div>
+      </div>
+
   );
 };
 
