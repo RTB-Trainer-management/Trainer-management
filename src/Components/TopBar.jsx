@@ -35,11 +35,11 @@ const TopBar = () => {
 
       {/* Search + Icons */}
       <div className="flex items-center gap-6">
-        <div className="bg-gray-100 rounded-md px-3 py-1 flex items-center">
+        <div className="rounded-lg px-3 py-1 flex items-center">
           <input
             type="text"
             placeholder="Search"
-            className="bg-transparent outline-none text-sm text-gray-600 w-48"
+            className="bg-gray-100 rounded-xl outline-none focus:border-blue-500 focus:border text-sm py-2 px-5 text-gray-600 w-60"
           />
         </div>
 

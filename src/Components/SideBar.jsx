@@ -9,7 +9,7 @@ import { TbListDetails } from "react-icons/tb";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { FaUsersViewfinder } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updatePerformance } from "../redux/Features/authSlice"; // Adjust path
 import RtbImage from "../assets/rtb.png";
 
@@ -153,9 +153,8 @@ const CollapsibleItem = ({ title, icon, collapsed, isOpen, toggle, items, onSubI
 const SubItem = ({ to, label, comp, onClick }) => {
   const handleClick = () => {
     if (onClick && comp) {
-      onClick(to, comp); // Pass route and value
+      onClick(to, comp);
     } else {
-      // For non-performance items, just navigate
       window.location.href = to;
     }
   };
