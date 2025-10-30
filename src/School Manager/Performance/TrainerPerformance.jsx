@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FaPen, FaRegEye, FaTimes } from "react-icons/fa";
 
 const TrainerPerformance = () => {
-  const [activeTab, setActiveTab] = useState("Rejected");
+  const [activeTab, setActiveTab] = useState("Pending");
   const [openView, setOpenView] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedTrainer, setSelectedTrainer] = useState(null);

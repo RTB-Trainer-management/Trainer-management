@@ -12,7 +12,7 @@ const Performance = () => {
 
   return (
     <div>
-      {performanceFor === "trainer" && <TrainerPerformance />}
+      {performanceFor === "performance" && <TrainerPerformance />}
       {performanceFor === "promotion" && <Promotion />}
       {performanceFor === "my-performance" && <MyPerformance />}
     </div>
