@@ -20,7 +20,7 @@ import './index.css';
 import SchoolManagement from './School Manager/SchoolManagement';
 import Trainers from './Trainers/Trainers';
 import Dashboard from './School Manager/Dashboard';
-import Performance from './School Manager/Performance/Perfomance';
+import Performance from './School Manager/Perfomance';
 import Vacant from './Recruitments/Vacant';
 import Trainers2 from './Recruitments/Trainers';
 import Transfers from './Recruitments/Transfers';
