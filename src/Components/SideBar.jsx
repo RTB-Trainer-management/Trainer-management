@@ -33,7 +33,7 @@ const SideBar = () => {
   return (
     <aside
       className={`h-screen bg-gray-200 text-gray-600 shadow-md flex flex-col transition-all duration-300 ${
-        collapsed ? "w-20" : "w-64"
+        collapsed ? "w-20" : "w-[20rem]"
       }`}
     >
       <div className="flex justify-center mt-12 items-center py-6 border-b border-gray-300">
@@ -88,18 +88,18 @@ const SideBar = () => {
       </nav>
 
       <div className="px-4 pb-6 border-t border-gray-300">
-        <button className="w-full flex items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-300 transition-colors">
+        <button className="w-full flex cursor-pointer items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-300 transition-colors">
           <FaSignOutAlt className="text-gray-700" size={22} />
           {!collapsed && <span className="font-medium">Logout</span>}
         </button>
       </div>
 
-      <button
+      {/* <button
         onClick={toggleSidebar}
         className="absolute top-1/2 -right-3 transform -translate-y-1/2 bg-white border border-gray-300 rounded-full p-1 shadow-md hover:bg-gray-50"
       >
         {collapsed ? <IoIosArrowForward size={18} /> : <IoIosArrowDown size={18} />}
-      </button>
+      </button> */}
     </aside>
   );
 };
