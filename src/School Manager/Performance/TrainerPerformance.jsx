@@ -1,6 +1,7 @@
-// Performance.jsx   (JavaScript)
-import { useState } from "react";
+// Performance.jsx
+import { useState, useEffect } from "react";
 import { FaPen, FaRegEye, FaTimes } from "react-icons/fa";
+import { useGetAllPerformancesQuery, useGetAllTrainersQuery } from "../../redux/api/SchoolManagerSlice";
 
 const TrainerPerformance = () => {
   const [activeTab, setActiveTab] = useState("Pending");
@@ -12,13 +13,29 @@ const TrainerPerformance = () => {
   const [appealResponse, setAppealResponse] = useState("");
   const [showAppealResponse, setShowAppealResponse] = useState(false);
 
-  const data = [
-    { trainer: "Vraiment Donc", rate: "76%", status: "Rejected", message: "You have not uploaded your national ID transcript" },
-    { trainer: "Vraiment Donc", rate: "76%", status: "Rejected", message: "Incomplete academic credentials" },
-    { trainer: "Uwimimana Clarisse", rate: "76%", status: "Rejected", message: "Incomplete academic credentials" },
-    { trainer: "Uwimimana Clarisse", rate: "76%", status: "Rejected", message: "Incomplete academic credentials" },
-    { trainer: "Uwimimana Clarisse", rate: "76%", status: "Rejected", message: "Incomplete academic credentials" },
+  const fallbackPerformance = [
+    { id: 1, trainer_id: 10, rate: "76", status: "rejected", rejection_message: "You have not uploaded your national ID transcript" },
+    { id: 2, trainer_id: 11, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
+    { id: 3, trainer_id: 12, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
+    { id: 4, trainer_id: 12, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
+    { id: 5, trainer_id: 12, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
   ];
+
+  const {
+    data: fetchedPerformance = [],
+    isLoading,
+    isError,
+    error,
+  } = useGetAllPerformancesQuery();
+
+  const { data: managers = [] } = useGetAllTrainersQuery();
+
+  const performance = fetchedPerformance.length > 0 ? fetchedPerformance : fallbackPerformance;
+
+  const getTrainerName = (trainerId) => {
+    const trainer = managers.find((m) => m.id === trainerId);
+    return trainer ? `${trainer.first_name} ${trainer.last_name}` : `Trainer ID: ${trainerId}`;
+  };
 
   const performanceCriteria = [
     "Preparation T/L materials",
@@ -67,7 +84,16 @@ const TrainerPerformance = () => {
   const handleResponseSubmission = (e) => {
     e.preventDefault();
     setShowAppealResponse(true);
-  }
+  };
+
+  // Filter by tab — now safe because performance is always an array
+  const filteredPerformance = performance.filter((item) => {
+    const status = item.status.toLowerCase();
+    if (activeTab === "Pending") return status === "pending";
+    if (activeTab === "Approved") return status === "approved";
+    if (activeTab === "Rejected") return status === "rejected";
+    return true;
+  });
 
   return (
     <>
@@ -100,44 +126,72 @@ const TrainerPerformance = () => {
             </div>
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className="mt-6 mx-6 text-center py-10">
+              <p className="text-gray-600">Loading performances...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {isError && (
+            <div className="mt-6 mx-6 text-center py-10">
+              <p className="text-red-600">
+                Error: {error?.data?.message || "Failed to load performances"}
+              </p>
+            </div>
+          )}
+
           {/* Table */}
-          <div className="mt-6 mx-6 bg-white rounded-xl shadow-sm overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left text-sm font-semibold">
-                  <th className="py-4 px-6">Trainers</th>
-                  <th className="py-4 px-6">Rate</th>
-                  <th className="py-4 px-6 text-center">View</th>
-                  <th className="py-4 px-6 text-center">Edit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((item, index) => (
-                  <tr
-                    key={index}
-                    className={`border-t text-sm ${
-                      index % 2 === 0 ? "bg-white" : "bg-[#F8FAFF]"
-                    } hover:bg-blue-50 transition-colors`}
-                  >
-                    <td className="py-4 px-6 font-medium text-gray-800">{item.trainer}</td>
-                    <td className="py-4 px-6 text-gray-700">{item.rate}</td>
-                    <td className="py-4 px-6 text-center">
-                      <FaRegEye
-                        onClick={() => handleView(item)}
-                        className="mx-auto text-xl text-gray-500 hover:text-[#1D5FAD] cursor-pointer transition"
-                      />
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      <FaPen
-                        onClick={() => handleOpenEdit(item)}
-                        className="mx-auto text-lg text-gray-500 hover:text-[#1D5FAD] cursor-pointer transition"
-                      />
-                    </td>
+          {!isLoading && !isError && (
+            <div className="mt-6 mx-6 bg-white rounded-xl shadow-sm overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-[#EEF4FF] text-[#1D5FAD] text-left text-sm font-semibold">
+                    <th className="py-4 px-6">Trainers</th>
+                    <th className="py-4 px-6">Rate</th>
+                    <th className="py-4 px-6 text-center">View</th>
+                    <th className="py-4 px-6 text-center">Edit</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredPerformance.length > 0 ? (
+                    filteredPerformance.map((item, index) => (
+                      <tr
+                        key={item.id}
+                        className={`border-t text-sm ${
+                          index % 2 === 0 ? "bg-white" : "bg-[#F8FAFF]"
+                        } hover:bg-blue-50 transition-colors`}
+                      >
+                        <td className="py-4 px-6 font-medium text-gray-800">
+                          {getTrainerName(item?.trainer_id)}
+                        </td>
+                        <td className="py-4 px-6 text-gray-700">{item?.rate}%</td>
+                        <td className="py-4 px-6 text-center">
+                          <FaRegEye
+                            onClick={() => handleView(item)}
+                            className="mx-auto text-xl text-gray-500 hover:text-[#1D5FAD] cursor-pointer transition"
+                          />
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          <FaPen
+                            onClick={() => handleOpenEdit(item)}
+                            className="mx-auto text-lg text-gray-500 hover:text-[#1D5FAD] cursor-pointer transition"
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" className="text-center py-8 text-gray-500">
+                        No {activeTab.toLowerCase()} performances found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {/* Pagination */}
           <div className="flex justify-center mt-8 space-x-2 pb-8">
@@ -161,62 +215,60 @@ const TrainerPerformance = () => {
       {openView && selectedTrainer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-opacity-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
-            {/* Header */}
             <div className="bg-[#1D5FAD] text-white py-4 px-6 flex justify-between items-center">
               <h3 className="text-lg font-bold">Trainers Performance Information</h3>
-              <button
-                onClick={() => setOpenView(false)}
-                className="text-white hover:text-gray-200 transition"
-              >
+              <button onClick={() => setOpenView(false)} className="text-white hover:text-gray-200 transition">
                 <FaTimes className="text-xl cursor-pointer" />
               </button>
             </div>
 
             <div className="p-6 flex gap-6 font-semibold text-gray-800">
-              {/* Left – Feedback */}
-              <div className="flex-1 border-r border-gray-500 border-r-5 pr-6">
+              <div className="flex-1 border-r border-gray-500 pr-6">
                 <h4 className="font-semibold text-gray-700 mb-3">Feedback Information</h4>
                 <div className="bg-gray-500 w-[5rem] h-1 mb-3 rounded-3xl"></div>
                 <p className="text-sm text-gray-600 mb-2">
-                  <span className="font-medium">Vacant post status:</span>{" "}
-                  <span className="text-blue-600 font-bold">{selectedTrainer.status}</span>
+                  <span className="font-medium">Status:</span>{" "}
+                  <span className="text-blue-600 font-bold">
+                    {selectedTrainer.status.charAt(0).toUpperCase() + selectedTrainer.status.slice(1)}
+                  </span>
                 </p>
                 <p className="text-sm text-gray-600">
-                  <span className="font-semibold  text-gray-700">Rejection Message:</span> {selectedTrainer.message}
+                  <span className="font-semibold text-gray-700">Rejection Message:</span>{" "}
+                  {selectedTrainer.rejection_message || "N/A"}
                 </p>
               </div>
 
-              {/* Right – Appeal */}
               <div className="flex-1 pl-2">
                 <h4 className="font-semibold text-gray-700 mb-3">Appealing Information</h4>
                 <div className="bg-gray-500 w-[5rem] h-1 mb-3 rounded-3xl"></div>
                 <p className="text-xs text-gray-600 mb-4 leading-relaxed">
-                  <h4 className="text-gray-700 font-bold">Description:</h4> I have reached the minimum reference in my classes so if you may
+                  <strong>Description:</strong> I have reached the minimum reference in my classes so if you may
                   reconsider my request please.
                 </p>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Appeal Response
                 </label>
-                {
-                  showAppealResponse ? <>
-                    <p className="font-normal">{appealResponse}</p>
-                  </>: <form onSubmit={handleResponseSubmission}>
-                  <textarea
-                  value={appealResponse}
-                  onChange={(e) => setAppealResponse(e.target.value)}
-                  className="w-full h-24 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none resize-none text-sm"
-                  placeholder="Enter your response..."
-                />
-
-                <button type="submit" className="mt-4 cursor-pointer w-full bg-[#1D5FAD] text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition shadow-md">
-                  Respond
-                </button>
+                {showAppealResponse ? (
+                  <p className="font-normal">{appealResponse}</p>
+                ) : (
+                  <form onSubmit={handleResponseSubmission}>
+                    <textarea
+                      value={appealResponse}
+                      onChange={(e) => setAppealResponse(e.target.value)}
+                      className="w-full h-24 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none resize-none text-sm"
+                      placeholder="Enter your response..."
+                    />
+                    <button
+                      type="submit"
+                      className="mt-4 cursor-pointer w-full bg-[#1D5FAD] text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition shadow-md"
+                    >
+                      Respond
+                    </button>
                   </form>
-                }
+                )}
               </div>
             </div>
 
-            {/* Footer */}
             <div className="border-t px-6 py-3 mb-5 text-right">
               <button
                 onClick={() => setOpenView(false)}
@@ -233,18 +285,13 @@ const TrainerPerformance = () => {
       {openEdit && selectedTrainer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 bg-opacity-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-8">
-            {/* Header */}
             <div className="bg-[#1D5FAD] text-white py-4 px-6 flex justify-between items-center rounded-t-2xl">
               <h3 className="text-lg font-bold">Performance Edit</h3>
-              <button
-                onClick={() => setOpenEdit(false)}
-                className="text-white hover:text-gray-200 transition"
-              >
+              <button onClick={() => setOpenEdit(false)} className="text-white hover:text-gray-200 transition">
                 <FaTimes className="text-xl cursor-pointer" />
               </button>
             </div>
 
-            {/* Stepper */}
             <div className="flex items-center justify-center my-8 px-6">
               <div className="flex items-center space-x-4">
                 <div
@@ -254,7 +301,6 @@ const TrainerPerformance = () => {
                 >
                   1
                 </div>
-
                 <div className={`w-32 h-1 ${step >= 1 ? "bg-[#1D5FAD]" : "bg-gray-300"}`} />
                 <div className={`w-32 h-1 ${step >= 2 ? "bg-[#1D5FAD]" : "bg-gray-300"}`} />
                 <div
@@ -268,15 +314,10 @@ const TrainerPerformance = () => {
             </div>
 
             <div className="flex justify-center space-x-16 text-sm font-semibold mb-6">
-              <span className={step === 1 ? "text-[#1D5FAD]" : "text-gray-400"}>
-                Expected Results
-              </span>
-              <span className={step === 2 ? "text-[#1D5FAD]" : "text-gray-400"}>
-                Exhibited Behaviour
-              </span>
+              <span className={step === 1 ? "text-[#1D5FAD]" : "text-gray-400"}>Expected Results</span>
+              <span className={step === 2 ? "text-[#1D5FAD]" : "text-gray-400"}>Exhibited Behaviour</span>
             </div>
 
-            {/* Step 1 – Expected Results */}
             {step === 1 && (
               <div className="px-10 pb-8">
                 <div className="flex justify-between mb-6">
@@ -301,7 +342,6 @@ const TrainerPerformance = () => {
                   </div>
                 ))}
 
-                {/* Total */}
                 <div className="mt-8 text-center">
                   <span className="bg-[#1D5FAD] text-white px-6 py-3 rounded-full text-lg font-bold shadow-lg">
                     {calculateTotal()}%
@@ -315,7 +355,7 @@ const TrainerPerformance = () => {
                     className={`px-8 py-2.5 rounded-lg font-medium transition-all ${
                       isStep1Valid()
                         ? "bg-[#1D5FAD] cursor-pointer text-white hover:bg-blue-700 shadow-md"
-                        : "bg-gray-300  text-gray-500 cursor-not-allowed"
+                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
                   >
                     Next
@@ -324,52 +364,48 @@ const TrainerPerformance = () => {
               </div>
             )}
 
-            {/* Step 2 – Exhibited Behaviour */}
             {step === 2 && (
               <div className="px-10 pb-8">
-              <div className="flex justify-between mb-6">
-                <h4 className="text-[#1D5FAD] font-bold">Title</h4>
-                <h4 className="text-[#1D5FAD] font-bold mr-12">Score</h4>
-              </div>
-
-              {performanceCriteria.map((criteria) => (
-                <div key={criteria} className="flex justify-between items-center mb-5">
-                  <div className="bg-gray-100 text-gray-800 px-6 py-3 rounded-xl w-80 text-sm font-medium">
-                    {criteria}
-                  </div>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={scores[criteria] || ""}
-                    onChange={(e) => handleScoreChange(criteria, e.target.value)}
-                    className="w-20 h-12 text-center border border-gray-400 rounded-xl focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none font-medium"
-                    placeholder="0"
-                  />
+                <div className="flex justify-between mb-6">
+                  <h4 className="text-[#1D5FAD] font-bold">Title</h4>
+                  <h4 className="text-[#1D5FAD] font-bold mr-12">Score</h4>
                 </div>
-              ))}
 
-              {/* Total */}
-              <div className="mt-8 text-center">
-                <span className="bg-[#1D5FAD] text-white px-6 py-3 rounded-full text-lg font-bold shadow-lg">
-                  {calculateTotal()}%
-                </span>
-              </div>
+                {performanceCriteria.map((criteria) => (
+                  <div key={criteria} className="flex justify-between items-center mb-5">
+                    <div className="bg-gray-100 text-gray-800 px-6 py-3 rounded-xl w-80 text-sm font-medium">
+                      {criteria}
+                    </div>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={scores[criteria] || ""}
+                      onChange={(e) => handleScoreChange(criteria, e.target.value)}
+                      className="w-20 h-12 text-center border border-gray-400 rounded-xl focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none font-medium"
+                      placeholder="0"
+                    />
+                  </div>
+                ))}
 
-              <div className="flex justify-center mt-8">
-                <button
-                  onClick={handleNext}
-                  disabled={!isStep1Valid()}
-                  className={`px-8 py-2.5 rounded-lg font-medium transition-all ${
-                    isStep1Valid()
-                      ? "bg-[#1D5FAD] cursor-pointer text-white hover:bg-blue-700 shadow-md"
-                      : "bg-gray-300  text-gray-500 cursor-not-allowed"
-                  }`}
-                >
-                  Save
-                </button>
+                <div className="mt-8 text-center">
+                  <span className="bg-[#1D5FAD] text-white px-6 py-3 rounded-full text-lg font-bold shadow-lg">
+                    {calculateTotal()}%
+                  </span>
+                </div>
+
+                <div className="flex justify-center mt-8">
+                  <button
+                    onClick={() => {
+                      alert("Performance saved!");
+                      setOpenEdit(false);
+                    }}
+                    className="px-8 py-2.5 rounded-lg font-medium bg-[#1D5FAD] text-white hover:bg-blue-700 shadow-md transition-all"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
-            </div>
             )}
           </div>
         </div>
