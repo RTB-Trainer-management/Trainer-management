@@ -10,7 +10,7 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { FaUsersViewfinder } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { updatePerformance } from "../redux/Features/authSlice"; // Adjust path
+import { logout, selectCurrentUser, updatePerformance } from "../redux/Features/authSlice";
 import RtbImage from "../assets/rtb.png";
 
 const SideBar = () => {
@@ -18,6 +18,7 @@ const SideBar = () => {
   const [openMenu, setOpenMenu] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector(selectCurrentUser);
 
   const toggleSidebar = () => setCollapsed((c) => !c);
   const toggleMenu = (menuName) => {
@@ -30,11 +31,15 @@ const SideBar = () => {
     navigate('/performance');
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/user/login", { replace: true });
+  };
+
   return (
     <aside
-      className={`h-screen bg-gray-200 text-gray-600 shadow-md flex flex-col transition-all duration-300 ${
-        collapsed ? "w-20" : "w-[20rem]"
-      }`}
+      className={`h-screen bg-gray-200 text-gray-600 shadow-md flex flex-col transition-all duration-300 ${collapsed ? "w-20" : "w-[20rem]"
+        }`}
     >
       <div className="flex justify-center mt-12 items-center py-6 border-b border-gray-300">
         <img
@@ -45,50 +50,62 @@ const SideBar = () => {
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
-        <NavItem to="/" icon={<FaHome size={22} />} label="Home" collapsed={collapsed} />
-
-        <CollapsibleItem
-          title="Recruitments"
-          icon={<FaUsersViewfinder size={22} />}
+        <NavItem
+          to={user?.userType === "trainer" ? "/trainers" : "/"}
+          icon={<FaHome size={22} />}
+          label="Home"
           collapsed={collapsed}
-          isOpen={openMenu === "recruitment"}
-          toggle={() => toggleMenu("recruitment")}
-          items={[
-            { to: "/recruitments/transfers", label: "Transfers" },
-            { to: "/recruitments/trainers", label: "Trainers" },
-            { to: "/recruitments/vacant-posts", label: "Vacant Posts" }
-          ]}
         />
 
-        <CollapsibleItem
-          title="Performance"
-          icon={<GoGraph size={22} />}
-          collapsed={collapsed}
-          isOpen={openMenu === "performance"}
-          toggle={() => toggleMenu("performance")}
-          items={[
-            { to: "", label: "Performance", comp: "performance" },
-            { to: "", label: "Promotion", comp: "promotion" },
-            { to: "", label: "My Performance", comp: "my-performance" },
-          ]}
-          onSubItemClick={handleNavUpdate}
-        />
+        {user?.userType === "school_manager" && (
+          <>
+            <CollapsibleItem
+              title="Recruitments"
+              icon={<FaUsersViewfinder size={22} />}
+              collapsed={collapsed}
+              isOpen={openMenu === "recruitment"}
+              toggle={() => toggleMenu("recruitment")}
+              items={[
+                { to: "/recruitments/transfers", label: "Transfers" },
+                { to: "/recruitments/trainers", label: "Trainers" },
+                { to: "/recruitments/vacant-posts", label: "Vacant Posts" }
+              ]}
+            />
 
-        <CollapsibleItem
-          title="Payments"
-          icon={<FaFileInvoiceDollar size={22} />}
-          collapsed={collapsed}
-          isOpen={openMenu === "payment"}
-          toggle={() => toggleMenu("payment")}
-          items={[
-            { to: "/payment/invoices", label: "Invoices" },
-            { to: "/payment/history", label: "Payment History" },
-          ]}
-        />
+            <CollapsibleItem
+              title="Performance"
+              icon={<GoGraph size={22} />}
+              collapsed={collapsed}
+              isOpen={openMenu === "performance"}
+              toggle={() => toggleMenu("performance")}
+              items={[
+                { to: "", label: "Performance", comp: "performance" },
+                { to: "", label: "Promotion", comp: "promotion" },
+                { to: "", label: "My Performance", comp: "my-performance" },
+              ]}
+              onSubItemClick={handleNavUpdate}
+            />
+
+            <CollapsibleItem
+              title="Payments"
+              icon={<FaFileInvoiceDollar size={22} />}
+              collapsed={collapsed}
+              isOpen={openMenu === "payment"}
+              toggle={() => toggleMenu("payment")}
+              items={[
+                { to: "/payment/invoices", label: "Invoices" },
+                { to: "/payment/history", label: "Payment History" },
+              ]}
+            />
+          </>
+        )}
       </nav>
 
       <div className="px-4 pb-6 border-t border-gray-300">
-        <button className="w-full flex cursor-pointer items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-300 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="w-full flex cursor-pointer items-center gap-3 py-3 px-2 rounded-md hover:bg-gray-300 transition-colors"
+        >
           <FaSignOutAlt className="text-gray-700" size={22} />
           {!collapsed && <span className="font-medium">Logout</span>}
         </button>
@@ -107,9 +124,8 @@ const SideBar = () => {
 const NavItem = ({ to, icon, label, collapsed }) => (
   <Link
     to={to}
-    className={`flex items-center gap-3 py-3 px-3 rounded-md text-gray-700 hover:bg-gray-300 transition-all ${
-      collapsed ? "justify-center" : ""
-    }`}
+    className={`flex items-center gap-3 py-3 px-3 rounded-md text-gray-700 hover:bg-gray-300 transition-all ${collapsed ? "justify-center" : ""
+      }`}
   >
     {icon}
     {!collapsed && <span className="font-medium">{label}</span>}
@@ -120,9 +136,8 @@ const CollapsibleItem = ({ title, icon, collapsed, isOpen, toggle, items, onSubI
   <div>
     <button
       onClick={toggle}
-      className={`w-full hover:cursor-pointer flex items-center justify-between gap-3 py-3 px-3 rounded-md hover:bg-gray-300 transition-all ${
-        collapsed ? "justify-center" : ""
-      }`}
+      className={`w-full hover:cursor-pointer flex items-center justify-between gap-3 py-3 px-3 rounded-md hover:bg-gray-300 transition-all ${collapsed ? "justify-center" : ""
+        }`}
     >
       <div className="flex items-center gap-3">
         {icon}

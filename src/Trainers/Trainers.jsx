@@ -6,11 +6,13 @@ import SideBar from '../Components/SideBar';
 
 const Trainers = () => {
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100">
       <ToastContainer />
-      <main>
+      <main className="flex w-full h-full">
         <SideBar />
-        <Outlet />
+        <div className="flex-1">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

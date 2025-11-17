@@ -1,7 +1,13 @@
 // Performance.jsx
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FaPen, FaRegEye, FaTimes } from "react-icons/fa";
-import { useGetAllPerformancesQuery, useGetAllTrainersQuery } from "../../redux/api/SchoolManagerSlice";
+import { toast } from "react-toastify";
+import {
+  useEditPerformanceMutation,
+  useGetAllPerformancesQuery,
+  useGetAllTrainersQuery,
+  useRespondToPerformanceMutation,
+} from "../../redux/api/SchoolManagerSlice";
 
 const TrainerPerformance = () => {
   const [activeTab, setActiveTab] = useState("Pending");
@@ -11,15 +17,7 @@ const TrainerPerformance = () => {
   const [step, setStep] = useState(1);
   const [scores, setScores] = useState({});
   const [appealResponse, setAppealResponse] = useState("");
-  const [showAppealResponse, setShowAppealResponse] = useState(false);
-
-  const fallbackPerformance = [
-    { id: 1, trainer_id: 10, rate: "76", status: "rejected", rejection_message: "You have not uploaded your national ID transcript" },
-    { id: 2, trainer_id: 11, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
-    { id: 3, trainer_id: 12, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
-    { id: 4, trainer_id: 12, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
-    { id: 5, trainer_id: 12, rate: "76", status: "rejected", rejection_message: "Incomplete academic credentials" },
-  ];
+  const [responseDecision, setResponseDecision] = useState("approve");
 
   const {
     data: fetchedPerformance = [],
@@ -29,8 +27,10 @@ const TrainerPerformance = () => {
   } = useGetAllPerformancesQuery();
 
   const { data: managers = [] } = useGetAllTrainersQuery();
+  const [respondToPerformance, { isLoading: isResponding }] = useRespondToPerformanceMutation();
+  const [editPerformance, { isLoading: isSavingEdit }] = useEditPerformanceMutation();
 
-  const performance = fetchedPerformance.length > 0 ? fetchedPerformance : fallbackPerformance;
+  const performance = fetchedPerformance;
 
   const getTrainerName = (trainerId) => {
     const trainer = managers.find((m) => m.id === trainerId);
@@ -38,10 +38,10 @@ const TrainerPerformance = () => {
   };
 
   const performanceCriteria = [
-    "Preparation T/L materials",
-    "Provide scheme of work",
-    "Deliver Teachings to students",
-    "Students evaluated and marks",
+    { label: "Preparation T/L materials", field: "prep_materials" },
+    { label: "Provide scheme of work", field: "scheme_of_work" },
+    { label: "Deliver Teachings to students", field: "delivery_techniques" },
+    { label: "Students evaluated and marks", field: "students" },
   ];
 
   const handleView = (trainer) => {
@@ -56,13 +56,17 @@ const TrainerPerformance = () => {
     setScores({});
   };
 
-  const handleScoreChange = (criteria, value) => {
-    setScores((prev) => ({ ...prev, [criteria]: value }));
+  const handleScoreChange = (criteriaField, value) => {
+    setScores((prev) => ({ ...prev, [criteriaField]: value }));
   };
 
   const isStep1Valid = () => {
     return performanceCriteria.every(
-      (c) => scores[c] && parseInt(scores[c], 10) >= 0 && parseInt(scores[c], 10) <= 100
+      ({ field }) =>
+        scores[field] !== undefined &&
+        scores[field] !== "" &&
+        parseInt(scores[field], 10) >= 0 &&
+        parseInt(scores[field], 10) <= 100
     );
   };
 
@@ -74,16 +78,29 @@ const TrainerPerformance = () => {
 
   const calculateTotal = () => {
     const total = performanceCriteria.reduce(
-      (sum, c) => sum + (parseInt(scores[c], 10) || 0),
+      (sum, { field }) => sum + (parseInt(scores[field], 10) || 0),
       0
     );
     const avg = performanceCriteria.length > 0 ? total / performanceCriteria.length : 0;
     return avg.toFixed(2);
   };
 
-  const handleResponseSubmission = (e) => {
+  const handleResponseSubmission = async (e) => {
     e.preventDefault();
-    setShowAppealResponse(true);
+    if (!selectedTrainer) return;
+
+    try {
+      await respondToPerformance({
+        trainerId: selectedTrainer.trainer_id,
+        response_message: appealResponse,
+        response: responseDecision === "approve" ? "yes" : "no",
+      }).unwrap();
+      toast.success("Response submitted");
+      setAppealResponse("");
+      setOpenView(false);
+    } catch (mutationError) {
+      toast.error(mutationError?.data?.message || "Failed to submit response");
+    }
   };
 
   // Filter by tab — now safe because performance is always an array
@@ -111,11 +128,10 @@ const TrainerPerformance = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-2 cursor-pointer rounded-full text-sm font-medium transition-all duration-200 ${
-                    activeTab === tab
-                      ? "bg-[#1D5FAD] text-white shadow-md"
-                      : "text-gray-600 hover:text-[#1D5FAD]"
-                  }`}
+                  className={`px-6 py-2 cursor-pointer rounded-full text-sm font-medium transition-all duration-200 ${activeTab === tab
+                    ? "bg-[#1D5FAD] text-white shadow-md"
+                    : "text-gray-600 hover:text-[#1D5FAD]"
+                    }`}
                 >
                   {tab}
                 </button>
@@ -159,14 +175,13 @@ const TrainerPerformance = () => {
                     filteredPerformance.map((item, index) => (
                       <tr
                         key={item.id}
-                        className={`border-t text-sm ${
-                          index % 2 === 0 ? "bg-white" : "bg-[#F8FAFF]"
-                        } hover:bg-blue-50 transition-colors`}
+                        className={`border-t text-sm ${index % 2 === 0 ? "bg-white" : "bg-[#F8FAFF]"
+                          } hover:bg-blue-50 transition-colors`}
                       >
                         <td className="py-4 px-6 font-medium text-gray-800">
                           {getTrainerName(item?.trainer_id)}
                         </td>
-                        <td className="py-4 px-6 text-gray-700">{item?.rate}%</td>
+                        <td className="py-4 px-6 text-gray-700">{item?.rate ?? 0}%</td>
                         <td className="py-4 px-6 text-center">
                           <FaRegEye
                             onClick={() => handleView(item)}
@@ -198,11 +213,10 @@ const TrainerPerformance = () => {
             {[1, 2, 3, 4, 5].map((num) => (
               <button
                 key={num}
-                className={`w-10 h-10 rounded-xl cursor-pointer text-sm font-medium transition-all ${
-                  num === 1
-                    ? "bg-[#1D5FAD] text-white shadow-md"
-                    : "bg-gray-200 text-gray-700 hover:bg-[#1D5FAD] hover:text-white"
-                }`}
+                className={`w-10 h-10 rounded-xl cursor-pointer text-sm font-medium transition-all ${num === 1
+                  ? "bg-[#1D5FAD] text-white shadow-md"
+                  : "bg-gray-200 text-gray-700 hover:bg-[#1D5FAD] hover:text-white"
+                  }`}
               >
                 {num}
               </button>
@@ -248,24 +262,31 @@ const TrainerPerformance = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Appeal Response
                 </label>
-                {showAppealResponse ? (
-                  <p className="font-normal">{appealResponse}</p>
-                ) : (
-                  <form onSubmit={handleResponseSubmission}>
-                    <textarea
-                      value={appealResponse}
-                      onChange={(e) => setAppealResponse(e.target.value)}
-                      className="w-full h-24 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none resize-none text-sm"
-                      placeholder="Enter your response..."
-                    />
-                    <button
-                      type="submit"
-                      className="mt-4 cursor-pointer w-full bg-[#1D5FAD] text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition shadow-md"
-                    >
-                      Respond
-                    </button>
-                  </form>
-                )}
+                <form onSubmit={handleResponseSubmission}>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Decision</label>
+                  <select
+                    value={responseDecision}
+                    onChange={(e) => setResponseDecision(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg p-2 mb-3 focus:ring-2 focus:ring-[#1D5FAD]"
+                  >
+                    <option value="approve">Approve</option>
+                    <option value="reject">Reject</option>
+                  </select>
+                  <textarea
+                    value={appealResponse}
+                    onChange={(e) => setAppealResponse(e.target.value)}
+                    className="w-full h-24 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none resize-none text-sm"
+                    placeholder="Enter your response..."
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={isResponding}
+                    className="mt-4 cursor-pointer w-full bg-[#1D5FAD] text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition shadow-md disabled:opacity-60"
+                  >
+                    {isResponding ? "Sending..." : "Respond"}
+                  </button>
+                </form>
               </div>
             </div>
 
@@ -295,18 +316,16 @@ const TrainerPerformance = () => {
             <div className="flex items-center justify-center my-8 px-6">
               <div className="flex items-center space-x-4">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                    step >= 1 ? "bg-[#1D5FAD] text-white" : "bg-gray-300 text-gray-600"
-                  }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${step >= 1 ? "bg-[#1D5FAD] text-white" : "bg-gray-300 text-gray-600"
+                    }`}
                 >
                   1
                 </div>
                 <div className={`w-32 h-1 ${step >= 1 ? "bg-[#1D5FAD]" : "bg-gray-300"}`} />
                 <div className={`w-32 h-1 ${step >= 2 ? "bg-[#1D5FAD]" : "bg-gray-300"}`} />
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                    step >= 2 ? "bg-[#1D5FAD] text-white" : "bg-gray-300 text-gray-600"
-                  }`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${step >= 2 ? "bg-[#1D5FAD] text-white" : "bg-gray-300 text-gray-600"
+                    }`}
                 >
                   2
                 </div>
@@ -325,17 +344,17 @@ const TrainerPerformance = () => {
                   <h4 className="text-[#1D5FAD] font-bold mr-12">Score</h4>
                 </div>
 
-                {performanceCriteria.map((criteria) => (
-                  <div key={criteria} className="flex justify-between items-center mb-5">
+                {performanceCriteria.map(({ label, field }) => (
+                  <div key={field} className="flex justify-between items-center mb-5">
                     <div className="bg-gray-100 text-gray-800 px-6 py-3 rounded-xl w-80 text-sm font-medium">
-                      {criteria}
+                      {label}
                     </div>
                     <input
                       type="number"
                       min="0"
                       max="100"
-                      value={scores[criteria] || ""}
-                      onChange={(e) => handleScoreChange(criteria, e.target.value)}
+                      value={scores[field] || ""}
+                      onChange={(e) => handleScoreChange(field, e.target.value)}
                       className="w-20 h-12 text-center border border-gray-400 rounded-xl focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none font-medium"
                       placeholder="0"
                     />
@@ -352,11 +371,10 @@ const TrainerPerformance = () => {
                   <button
                     onClick={handleNext}
                     disabled={!isStep1Valid()}
-                    className={`px-8 py-2.5 rounded-lg font-medium transition-all ${
-                      isStep1Valid()
-                        ? "bg-[#1D5FAD] cursor-pointer text-white hover:bg-blue-700 shadow-md"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
+                    className={`px-8 py-2.5 rounded-lg font-medium transition-all ${isStep1Valid()
+                      ? "bg-[#1D5FAD] cursor-pointer text-white hover:bg-blue-700 shadow-md"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
                   >
                     Next
                   </button>
@@ -371,17 +389,17 @@ const TrainerPerformance = () => {
                   <h4 className="text-[#1D5FAD] font-bold mr-12">Score</h4>
                 </div>
 
-                {performanceCriteria.map((criteria) => (
-                  <div key={criteria} className="flex justify-between items-center mb-5">
+                {performanceCriteria.map(({ label, field }) => (
+                  <div key={field} className="flex justify-between items-center mb-5">
                     <div className="bg-gray-100 text-gray-800 px-6 py-3 rounded-xl w-80 text-sm font-medium">
-                      {criteria}
+                      {label}
                     </div>
                     <input
                       type="number"
                       min="0"
                       max="100"
-                      value={scores[criteria] || ""}
-                      onChange={(e) => handleScoreChange(criteria, e.target.value)}
+                      value={scores[field] || ""}
+                      onChange={(e) => handleScoreChange(field, e.target.value)}
                       className="w-20 h-12 text-center border border-gray-400 rounded-xl focus:ring-2 focus:ring-[#1D5FAD] focus:border-transparent outline-none font-medium"
                       placeholder="0"
                     />
@@ -396,13 +414,29 @@ const TrainerPerformance = () => {
 
                 <div className="flex justify-center mt-8">
                   <button
-                    onClick={() => {
-                      alert("Performance saved!");
-                      setOpenEdit(false);
+                    onClick={async () => {
+                      if (!selectedTrainer) return;
+                      try {
+                        await editPerformance({
+                          performanceId: selectedTrainer.id,
+                          ...performanceCriteria.reduce(
+                            (acc, { field }) => ({
+                              ...acc,
+                              [field]: Number(scores[field]) || 0,
+                            }),
+                            {}
+                          ),
+                        }).unwrap();
+                        toast.success("Performance updated");
+                        setOpenEdit(false);
+                      } catch (mutationError) {
+                        toast.error(mutationError?.data?.message || "Failed to save performance");
+                      }
                     }}
-                    className="px-8 py-2.5 rounded-lg font-medium bg-[#1D5FAD] text-white hover:bg-blue-700 shadow-md transition-all"
+                    disabled={isSavingEdit}
+                    className="px-8 py-2.5 rounded-lg font-medium bg-[#1D5FAD] text-white hover:bg-blue-700 shadow-md transition-all disabled:opacity-60"
                   >
-                    Save
+                    {isSavingEdit ? "Saving..." : "Save"}
                   </button>
                 </div>
               </div>

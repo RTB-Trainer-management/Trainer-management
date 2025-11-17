@@ -1,34 +1,40 @@
 import { apiSlice } from "./apiSlice";
 
-const ADMIN_URL = "/admin"; 
+const ADMIN_URL = "/admin";
 
-const AdminSlice = apiSlice.injectEndpoints({
-  endpoints: builder => ({
-    AdminSignup: builder.mutation({
-      query: data => ({
-        url: `${MANAGER_URL}/create`,
+export const adminApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    adminSignup: builder.mutation({
+      query: (data) => ({
+        url: `${ADMIN_URL}/`,
         method: "POST",
-        body: data
-      })
+        body: data,
+      }),
     }),
-
-    GetAllTrainers: builder.query({
+    getAllAdminTrainers: builder.query({
       query: () => ({
-        url: `${MANAGER_URL}/trainers`,
+        url: `${ADMIN_URL}/trainers`,
         method: "GET",
-      })
+      }),
     }),
-
-    // GetTrainerById: builder.query({
-    //   query: id => ({
-    //     url: `${MANAGER_URL}/id`,
-    //     method: "GET"
-    //   })
-    // })
+    getAllAdminManagers: builder.query({
+      query: () => ({
+        url: `${ADMIN_URL}/managers`,
+        method: "GET",
+      }),
+    }),
+    deleteTrainer: builder.mutation({
+      query: (id) => ({
+        url: `${ADMIN_URL}/trainer/${id}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 
 export const {
-  useGetAllManagersQuery,
   useAdminSignupMutation,
-} = AdminSlice;
+  useGetAllAdminTrainersQuery,
+  useGetAllAdminManagersQuery,
+  useDeleteTrainerMutation,
+} = adminApi;

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { updatePerformance } from "./Features/authSlice"; // ← ADD THIS
+import { updatePerformance } from "./redux/Features/authSlice";
 
 const App = () => {
   const dispatch = useDispatch();

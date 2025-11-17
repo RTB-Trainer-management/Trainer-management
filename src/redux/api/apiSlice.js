@@ -1,13 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl:"http://localhost:5000",
+  baseUrl: "http://localhost:3000",
   credentials: "include",
-
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.access_token;
     if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
     return headers;
   },
@@ -15,9 +14,8 @@ const baseQuery = fetchBaseQuery({
 
 export const apiSlice = createApi({
   baseQuery,
-  endpoints: (builder) => ({
-    
-  }),
+  tagTypes: ["Performance", "Trainers", "Recruitments", "Profile"],
+  endpoints: () => ({}),
 });
 
 export const {

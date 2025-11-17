@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, createRoutesFromElements, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import App from './App';
 import Login from './Auth/Login';
 import NewUser from './NewUser';
 import Signup from './Auth/School-management';
@@ -19,16 +20,19 @@ import store from './redux/store';
 import './index.css';
 import SchoolManagement from './School Manager/SchoolManagement';
 import Trainers from './Trainers/Trainers';
-import Dashboard from './School Manager/Dashboard';
+import ManagerDashboard from './School Manager/Dashboard';
 import Performance from './School Manager/Perfomance';
 import Vacant from './Recruitments/Vacant';
 import Trainers2 from './Recruitments/Trainers';
 import Transfers from './Recruitments/Transfers';
+import RequireAuth from './Components/RequireAuth';
+import TrainerDashboard from './Trainers/Dashboard';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <>
+    <Route element={<App />}>
       <Route path="/user" element={<NewUser />}>
+        <Route index element={<Navigate to="login" replace />} />
         <Route path="login" element={<Login />} />
         <Route path="school-management" element={<Signup />} />
         <Route path="dde" element={<Dde />} />
@@ -42,20 +46,22 @@ const router = createBrowserRouter(
         <Route path="verify" element={<VerifyCode />} />
       </Route>
 
-      <Route path='/' element={<SchoolManagement />} >
-        <Route path='' element={<Dashboard />} />
-        <Route path='performance' element={<Performance />} />
-
-        <Route path='/recruitments/vacant-posts' element={<Vacant />} />
-        <Route path='/recruitments/trainers' element={<Trainers2 />} />
-       < Route path='/recruitments/transfers' element={<Transfers />} />
+      <Route element={<RequireAuth allowedRoles={['school_manager']} />}>
+        <Route path='/' element={<SchoolManagement />} >
+          <Route index element={<ManagerDashboard />} />
+          <Route path='performance' element={<Performance />} />
+          <Route path='recruitments/vacant-posts' element={<Vacant />} />
+          <Route path='recruitments/trainers' element={<Trainers2 />} />
+          <Route path='recruitments/transfers' element={<Transfers />} />
+        </Route>
       </Route>
 
-
-      <Route path='/trainers' element={<Trainers />} >
-        <Route path='' element={<Dashboard />} />
+      <Route element={<RequireAuth allowedRoles={['trainer']} />}>
+        <Route path='/trainers' element={<Trainers />} >
+          <Route index element={<TrainerDashboard />} />
+        </Route>
       </Route>
-    </>
+    </Route>
   )
 );
 

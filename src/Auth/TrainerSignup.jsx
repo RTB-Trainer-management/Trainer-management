@@ -1,366 +1,208 @@
-import { Link } from "react-router-dom";
-import RtbImage from "../assets/rtb.png";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import RtbImage from "../assets/rtb.png";
+import { useTrainerSignupMutation } from "../redux/api/TrainerSlice";
+
+const initialState = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone: "",
+  gender: "",
+  level: "",
+  password: "",
+  national_id: "",
+  school_name: "",
+  employed: "",
+  birth_date: "",
+  province: "",
+  district: "",
+  passed_course: "",
+};
 
 const TrainerRegister = () => {
-  const [completedPersonalInfo, setCompletedPersonalInfo] = useState(false);
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(initialState);
+  const [signup, { isLoading }] = useTrainerSignupMutation();
 
-  const handleCompletePersonalInfo =(e) => {
-    e.preventDefault();
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-    console.log(completedPersonalInfo);
-    setCompletedPersonalInfo(true);
-  }
-  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const payload = {
+        ...formData,
+        employed: formData.employed === "yes",
+      };
+      await signup(payload).unwrap();
+      toast.success("Trainer account created. Please login.");
+      setFormData(initialState);
+      navigate("/user/login", { replace: true });
+    } catch (error) {
+      const message = error?.data?.message || "Registration failed";
+      toast.error(message);
+    }
+  };
+
   return (
-    <div className="min-h-screen w-full bg-[#1D5FAD] flex items-center justify-center">
-      <div className="bg-white w-[40%] rounded-xl shadow-lg px-10 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <img src={RtbImage} alt="RTB logo" className="w-40 h-auto" />
-          <div className="flex space-x-4 text-[#1D5FAD] font-medium">
-            <select className="border border-[#1D5FAD] rounded px-2 py-1">
-              <option>Trainer</option>
-              <option>School Manager</option>
-              <option>Manager</option>
-              <option>DDE</option>
-              <option>RTB</option>
-              <option>SEO</option>
+    <div className="min-h-screen w-full bg-[#1D5FAD] flex items-center justify-center p-4">
+      <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg px-10 py-8">
+        <div className="flex flex-col items-center">
+          <img src={RtbImage} alt="RTB logo" className="w-32 h-auto" />
+          <h2 className="text-[#1D5FAD] text-2xl font-bold mt-4">Trainer Registration</h2>
+          <p className="text-gray-500 text-sm mt-2 text-center">
+            Join as a Trainer to access your personalized portal. Already have an account?{" "}
+            <Link to="/user/login" className="text-[#1D5FAD] font-semibold hover:underline">
+              Login
+            </Link>
+          </p>
+        </div>
+
+        <form className="mt-8 grid md:grid-cols-2 gap-6 text-sm" onSubmit={handleSubmit}>
+          {[
+            { name: "first_name", label: "First Name", placeholder: "John" },
+            { name: "last_name", label: "Last Name", placeholder: "Doe" },
+            { name: "email", label: "Email", type: "email", placeholder: "john@example.com" },
+            { name: "phone", label: "Phone", placeholder: "0781234567" },
+            { name: "password", label: "Password", type: "password" },
+            { name: "birth_date", label: "Birth Date", type: "date" },
+            { name: "national_id", label: "National ID" },
+            { name: "school_name", label: "School Name" },
+          ].map((field) => (
+            <div key={field.name}>
+              <label className="block text-gray-600 font-medium mb-1">{field.label}</label>
+              <input
+                name={field.name}
+                type={field.type || "text"}
+                value={formData[field.name]}
+                onChange={handleChange}
+                placeholder={field.placeholder}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
+                required
+              />
+            </div>
+          ))}
+
+          <div>
+            <label className="block text-gray-600 font-medium mb-1">Gender</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#1D5FAD]"
+              required
+            >
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </select>
           </div>
-        </div>
 
-        {completedPersonalInfo === false ? 
-        <>
-        <div className="mt-6 text-center">
-          <h2 className="text-[#1D5FAD] text-2xl font-bold mb-2">REGISTER</h2>
-          <div className="">
-            <div className="flex justify-center items-center space-x-1">
-            <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">1</div>
-              <div className="h-[5px] rounded-xl w-60 bg-[#1D5FAD]"></div>
-              <div className="h-[5px] rounded-xl w-60 bg-gray-300"></div>
-              <div className="w-8 h-7 border-2 hover:cursor-pointer border-gray-400 rounded-full"></div>
-            </div>
-            <div className="flex justify-center items-center space-x-8">
-            <div className="flex items-center block space-x-2">
-                <span className="text-[#1D5FAD] font-semibold text-sm">
-                  Personal info
-                </span>
-              </div>
-
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-400 font-semibold text-sm">
-                Address info
-              </span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form className="mt-8">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
-            {/* Column 1 */}
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Firstname
-              </label>
-              <input
-                type="text"
-                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-                placeholder="Firstname"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Lastname
-              </label>
-              <input
-                type="text"
-                placeholder="Lastname"
-                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Phone
-              </label>
-              <input
-                type="text"
-                placeholder="07888888888"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Gender
-              </label>
-              <select className="w-full text-black border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"              >
-                <option value="">Select</option>
-                <option>Male</option>
-                <option>Female</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="nicoco@gmail.com"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Birthdate
-              </label>
-              <div className="flex space-x-2">
-                <input
-                  type="number"
-                  maxLength={4}
-                  placeholder="YY"
-                  className="w-1/3 border border-gray-300 rounded-md px-2 py-2 text-center focus:ring-2 focus:ring-[#1D5FAD]"
-                />
-                <input
-                  type="number"
-                  placeholder="MM"
-                  className="w-1/3 border border-gray-300 rounded-md px-2 py-2 text-center focus:ring-2 focus:ring-[#1D5FAD]"
-                />
-                <input
-                  type="number"
-                  placeholder="DD"
-                  className="w-1/3 border border-gray-300 rounded-md px-2 py-2 text-center focus:ring-2 focus:ring-[#1D5FAD]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                National ID
-              </label>
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Trade
-              </label>
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Certificate
-              </label>
-              <select className="w-full border text-black border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]">
-                <option value="">Select</option>
-                <option>Certificate</option>
-                <option>Diploma</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Employed
-              </label>
-              <select className="w-full border text-black border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]">
-                <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Province
-              </label>
-              <select className="w-full border text-black border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]">
-                <option>Kigali</option>
-                <option>Southern</option>
-                <option>Western</option>
-                <option>Eastern</option>
-                <option>Northern</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                District
-              </label>
-              <input className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"/>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Cell
-              </label>
-              <input className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"/>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Village
-              </label>
-              <input className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"/>
-            </div>
-
-            <div className="flex">
-              <input type="radio" className="mr-[1rem] border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"/>
-              <label className="block text-gray-600 font-medium mb-1">
-                Passed exam
-              </label>
-            </div>
-
-            <div className="flex">
-              <input type="radio" className="mr-[1rem] border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"/>
-              <label className="block text-gray-600 font-medium mb-1">
-               Employed 
-              </label>
-            </div>
-          </div>
-
-          {/* Submit */}
-          <div className="flex flex-col items-center mt-8">
-            <button
-              onClick={handleCompletePersonalInfo}
-              className="bg-[#1D5FAD] w-48 text-white py-2 rounded-md hover:bg-[#174f91] transition"
+          <div>
+            <label className="block text-gray-600 font-medium mb-1">Level</label>
+            <select
+              name="level"
+              value={formData.level}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#1D5FAD]"
+              required
             >
-              Next
-            </button>
-            <p className="text-gray-600 text-sm mt-2">
-              Already registered?{" "}
-              <Link
-                to="/login"
-                className="text-[#1D5FAD] font-medium hover:underline"
-              >
-                Login
-              </Link>
-            </p>
-          </div>
-        </form> 
-        </>
-        : <>
-          <div className="mt-6 text-center">
-          <h2 className="text-[#1D5FAD] text-2xl font-bold mb-2">REGISTER</h2>
-          <div className="">
-            <div className="flex justify-center items-center space-x-1">
-            <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">1</div>
-              <div className="h-[5px] rounded-xl w-60 bg-[#1D5FAD]"></div>
-              <div className="h-[5px] rounded-xl w-60 bg-[#1D5FAD]"></div>
-              <div className="bg-[#1D5FAD] rounded-full w-8 hover:cursor-pointer font-semibold pt-[0.1rem] h-7">2</div>
-            </div>
-            <div className="flex justify-center items-center space-x-8">
-            <div className="flex items-center block space-x-2">
-                <span className="text-gray-400 font-semibold text-sm">
-                  Personal info
-                </span>
-              </div>
-
-            <div className="flex items-center space-x-2">
-              <span className=" text-[#1D5FAD] font-semibold text-sm">
-                Address info
-              </span>
-            </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form className="mt-8">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
-            {/* Column 1 */}
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Province
-              </label>
-              <input
-                type="text"
-                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-                placeholder="Firstname"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                District
-              </label>
-              <input
-                type="text"
-                placeholder="Lastname"
-                className="w-full border font-semibold border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Sector
-              </label>
-              <input
-                type="text"
-                placeholder="07888888888"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Cell
-              </label>
-              <select className="w-full text-black border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"              >
-                <option value="">Select</option>
-                <option>Male</option>
-                <option>Female</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-gray-600 font-medium mb-1">
-                Village
-              </label>
-              <input
-                type="email"
-                placeholder="nicoco@gmail.com"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD] outline-none"
-              />
-            </div>
+              <option value="">Select level</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
           </div>
 
-          {/* Submit */}
-          <div className="flex flex-col items-center mt-8">
+          <div>
+            <label className="block text-gray-600 font-medium mb-1">Employed</label>
+            <select
+              name="employed"
+              value={formData.employed}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#1D5FAD]"
+              required
+            >
+              <option value="">Select status</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-600 font-medium mb-1">Province</label>
+            <select
+              name="province"
+              value={formData.province}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#1D5FAD]"
+              required
+            >
+              <option value="">Select province</option>
+              <option value="Kigali City">Kigali City</option>
+              <option value="Eastern Province">Eastern Province</option>
+              <option value="Western Province">Western Province</option>
+              <option value="Southern Province">Southern Province</option>
+              <option value="Northern Province">Northern Province</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-gray-600 font-medium mb-1">District</label>
+            <input
+              name="district"
+              value={formData.district}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#1D5FAD]"
+              required
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="block text-gray-600 font-medium mb-1">Passed Course</label>
+            <select
+              name="passed_course"
+              value={formData.passed_course}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-[#1D5FAD]"
+              required
+            >
+              <option value="">Select course</option>
+              {[
+                "Math",
+                "Science",
+                "History",
+                "English",
+                "Art",
+                "Music",
+                "Physical Education",
+                "Other",
+              ].map((course) => (
+                <option key={course} value={course}>
+                  {course}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="md:col-span-2">
             <button
               type="submit"
-              className="bg-[#1D5FAD] w-48 text-white py-2 rounded-md hover:bg-[#174f91] transition"
+              disabled={isLoading}
+              className="w-full bg-[#1D5FAD] text-white py-3 rounded-lg font-semibold hover:bg-[#174f91] transition disabled:opacity-60"
             >
-              Register
+              {isLoading ? "Submitting..." : "Register"}
             </button>
-            <p className="text-gray-600 text-sm mt-2">
-              Already registered?{" "}
-              <Link
-                to="/login"
-                className="text-[#1D5FAD] font-medium hover:underline"
-              >
-                Login
-              </Link>
-            </p>
           </div>
-        </form> 
-        </>
-        }
+        </form>
       </div>
     </div>
   );
 };
 
 export default TrainerRegister;
+
