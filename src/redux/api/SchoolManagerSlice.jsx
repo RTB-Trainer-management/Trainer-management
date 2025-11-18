@@ -90,7 +90,6 @@ export const schoolManagerApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `${MANAGER_URL}/performance/${id}`,
         method: "GET",
-        body,
       }),
     }),
 
