@@ -7,7 +7,7 @@ const Performance = () => {
   const performanceFor = useSelector(state => state.nav.performance);
 
   if (!performanceFor) {
-    return <div className="p-4">Select a performance option from the sidebar.</div>;
+    return <TrainerPerformance />;
   }
 
   return (

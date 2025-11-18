@@ -85,7 +85,18 @@ export const schoolManagerApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Recruitments"],
     }),
+
+    getUsersPerformance: builder.query({
+      query: (id) => ({
+        url: `${MANAGER_URL}/performance/${id}`,
+        method: "GET",
+        body,
+      }),
+    }),
+
   }),
+
+
 });
 
 export const {
@@ -100,4 +111,5 @@ export const {
   useGetAllRecruitmentsQuery,
   useGetRecruitmentsByStatusQuery,
   useRespondToRecruitmentMutation,
+  useGetUsersPerformanceQuery
 } = schoolManagerApi;

@@ -38,7 +38,7 @@ const SideBar = () => {
 
   return (
     <aside
-      className={`h-screen bg-gray-200 text-gray-600 shadow-md flex flex-col transition-all duration-300 ${collapsed ? "w-20" : "w-[20rem]"
+      className={`h-[150%] bg-gray-200 text-gray-600 shadow-md flex flex-col transition-all duration-300 ${collapsed ? "w-20" : "w-[20rem]"
         }`}
     >
       <div className="flex justify-center mt-12 items-center py-6 border-b border-gray-300">

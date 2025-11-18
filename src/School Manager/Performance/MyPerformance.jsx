@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { FaPen, FaRegEye, FaTimes } from "react-icons/fa";
 import NewPerformanceForm from "./Components/NewPerformanceForm";
+import { useEditPerformanceMutation, useGetUsersPerformanceQuery } from "../../redux/api/SchoolManagerSlice";
+import { useSelector } from "react-redux";
 
 const MyPerformance = () => {
   const [activeTab, setActiveTab] = useState("All");
@@ -14,6 +16,7 @@ const MyPerformance = () => {
   const [addScores, setAddScores] = useState({}); // For new performance
   const [selectedYear, setSelectedYear] = useState("2025"); // Default year
 
+  const {user} = useSelector(state => state.rtb_auth);
   // Initial data (mutable for demo)
   const [data, setData] = useState([
     {
@@ -52,6 +55,11 @@ const MyPerformance = () => {
     "Deliver Teachings to students",
     "Students evaluated and marks",
   ];
+
+  const {data:  performance} = useGetUsersPerformanceQuery(user?.id);
+  console.log(data);
+
+  const [ createPerformance ] = useEditPerformanceMutation();
 
   const filteredData = data.filter(
     (item) => activeTab === "All" || item.status === activeTab
@@ -103,7 +111,7 @@ const MyPerformance = () => {
     }
   };
 
-  const handleSaveNewPerformance = () => {
+  const handleSaveNewPerformance = async () => {
     if (!isStepValid(addScores)) return;
 
     const expected = performanceCriteria.reduce((sum, c) => sum + parseInt(addScores[c], 10), 0);
@@ -117,6 +125,8 @@ const MyPerformance = () => {
       year: selectedYear,
       status: "Pending", // or auto-approve based on score
     };
+
+    const res = await createPerformance().unwrap();
 
     setData([newEntry, ...data]); // Add to top
     setOpenAdd(false);
