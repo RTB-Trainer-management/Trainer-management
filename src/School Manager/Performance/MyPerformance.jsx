@@ -13,6 +13,7 @@ const MyPerformance = () => {
   const [step, setStep] = useState(1);
   const [addScores, setAddScores] = useState({});
   const [selectedYear, setSelectedYear] = useState("2025");
+  const [selectedPerformance, setSelectedPerformance] = useState();
 
   const { user } = useSelector((state) => state.auth);
 
@@ -30,10 +31,9 @@ const MyPerformance = () => {
     "Students evaluated and marks": "students",
   };
 
-  const { data: performance } = useGetUsersPerformanceQuery(user?.id);
+  const { data: performance, refetch: refetchPerformance } = useGetUsersPerformanceQuery(user?.id);
   const [createPerformance] = useEditPerformanceMutation();
-  console.log(performance)
-
+  
   const filteredData = performance?.results?.filter(
     (item) => activeTab === "All" || item.status === activeTab
   ) || [];
@@ -90,6 +90,7 @@ const MyPerformance = () => {
     };
 
     await createPerformance(mappedPayload).unwrap();
+    refetchPerformance();
 
     setOpenAdd(false);
     setAddScores({});
@@ -111,7 +112,7 @@ const MyPerformance = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  className={`px-4 py-2 cursor-pointer rounded-full text-sm font-medium transition-all ${
                     activeTab === tab
                       ? "bg-[#1D5FAD] text-white shadow-md"
                       : "text-gray-600 hover:text-[#1D5FAD]"
@@ -124,7 +125,7 @@ const MyPerformance = () => {
 
             <button
               onClick={() => setOpenAdd(true)}
-              className="bg-[#1D5FAD] text-white font-semibold rounded-lg px-5 py-2.5 text-sm hover:bg-blue-700 transition shadow-md"
+              className="bg-[#1D5FAD] cursor-pointer text-white font-semibold rounded-lg px-5 py-2.5 text-sm hover:bg-blue-700 transition shadow-md"
             >
               New Performance
             </button>
@@ -143,10 +144,9 @@ const MyPerformance = () => {
 
               <tbody>
                 {filteredData.map((item) => (
-                  <tr key={item.id} className="border-t text-sm hover:bg-blue-50">
+                  <tr key={item.id} className="border-t  text-sm hover:bg-blue-50">
                     <td className="py-4 px-6 font-medium text-gray-800">{item?.rate}</td>
-                    <td className="py-4 px-6 text-center">{item?.academic_year}</td>
-                    {console.log(item)}
+                    <td className="py-4 px-6 text-center text-gray-800">{item?.academic_year}</td>
                     <td className="py-4 px-6 text-center">
                       <FaRegEye
                         onClick={() => handleView(item)}
@@ -173,12 +173,12 @@ const MyPerformance = () => {
       )}
 
       {openView && selectedTrainer && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+        <div className="fixed text-gray-800 inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl">
             <div className="bg-[#1D5FAD] text-white py-4 px-6 flex justify-between items-center">
               <h3 className="text-lg font-bold">Performance Details</h3>
               <button onClick={() => setOpenView(false)}>
-                <FaTimes className="text-xl" />
+                <FaTimes className="text-xl cursor-pointer" />
               </button>
             </div>
 
@@ -186,12 +186,12 @@ const MyPerformance = () => {
               <div className="grid grid-cols-2 gap-6 bg-gray-50 p-6 rounded-xl">
                 <div>
                   <h4 className="text-sm text-gray-600 mb-2">Rate</h4>
-                  <p className="text-lg font-semibold">{selectedTrainer.rate}</p>
+                  <p className="text-lg font-semibold">{selectedTrainer?.rate}</p>
                 </div>
 
                 <div>
                   <h4 className="text-sm text-gray-600 mb-2">Academic Year</h4>
-                  <p className="text-lg font-semibold">{selectedTrainer.academic_year}</p>
+                  <p className="text-lg font-semibold">{selectedTrainer?.academic_year}</p>
                 </div>
               </div>
 
@@ -209,7 +209,7 @@ const MyPerformance = () => {
             <div className="border-t px-6 py-4 text-right">
               <button
                 onClick={() => setOpenView(false)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                className="px-4 py-2 cursor-pointer bg-red-600 text-white rounded-lg"
               >
                 Close
               </button>
@@ -219,13 +219,13 @@ const MyPerformance = () => {
       )}
 
       {openAdd && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 overflow-y-auto p-10 pt-[6rem]">
+        <div className="fixed inset-0 z-50 flex text-gray-800 items-center justify-center bg-black/60 overflow-y-auto p-10 pt-[6rem]">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl">
 
             <div className="bg-[#1D5FAD] text-white py-4 px-6 flex justify-between items-center rounded-t-2xl">
               <h3 className="text-lg font-bold">Add New Performance</h3>
               <button onClick={() => setOpenAdd(false)}>
-                <FaTimes className="text-xl" />
+                <FaTimes className="text-xl cursor-pointer" />
               </button>
             </div>
 
@@ -285,7 +285,7 @@ const MyPerformance = () => {
                     {s === 2 && (
                       <button
                         onClick={() => setStep(1)}
-                        className="px-8 py-2.5 border rounded-lg"
+                        className="px-8 cursor-pointer py-2.5 border rounded-lg"
                       >
                         Previous
                       </button>
@@ -295,7 +295,7 @@ const MyPerformance = () => {
                       <button
                         onClick={() => setStep(2)}
                         disabled={!isStepValid(addScores)}
-                        className={`px-8 py-2.5 rounded-lg ${
+                        className={`px-8 py-2.5 cursor-pointer rounded-lg ${
                           isStepValid(addScores)
                             ? "bg-[#1D5FAD] text-white"
                             : "bg-gray-300 text-gray-500"
@@ -307,7 +307,7 @@ const MyPerformance = () => {
                       <button
                         onClick={handleSaveNewPerformance}
                         disabled={!isStepValid(addScores)}
-                        className={`px-8 py-2.5 rounded-lg ${
+                        className={`px-8 py-2.5 cursor-pointer rounded-lg ${
                           isStepValid(addScores)
                             ? "bg-green-600 text-white"
                             : "bg-gray-300 text-gray-500"
