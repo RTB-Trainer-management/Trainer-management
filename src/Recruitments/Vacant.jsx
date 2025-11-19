@@ -44,7 +44,9 @@ const Vacant = () => {
         </div>
 
         {/* Button */}
-        <button className="bg-blue-500 text-white text-sm px-2 py-2  rounded-lg hover:bg-blue-600 transition mr-10">
+        <button
+          onClick={() => window.location.href = '/recruitments/post-vacancy'}
+          className="bg-blue-500 text-white text-sm px-2 py-2  rounded-lg hover:bg-blue-600 transition mr-10">
           Post a Vacancy
         </button>
       </div>
@@ -59,8 +61,8 @@ const Vacant = () => {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-6 py-2 text-sm font-medium rounded-full transition-all ${activeTab === tab
-                  ? "bg-[#1D5FAD] text-white shadow-sm"
-                  : "text-gray-600 hover:text-[#1D5FAD]"
+                ? "bg-[#1D5FAD] text-white shadow-sm"
+                : "text-gray-600 hover:text-[#1D5FAD]"
                 }`}
             >
               {tab}
@@ -218,8 +220,8 @@ const Vacant = () => {
           <button
             key={num}
             className={`w-8 h-8 rounded-md text-sm font-medium transition ${num === 1
-                ? "bg-[#1D5FAD] text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-[#1D5FAD] hover:text-white"
+              ? "bg-[#1D5FAD] text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-[#1D5FAD] hover:text-white"
               }`}
           >
             {num}

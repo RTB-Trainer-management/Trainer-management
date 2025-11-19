@@ -32,9 +32,11 @@ const TrainerPerformance = () => {
 
   const performance = fetchedPerformance;
 
+  console.log(managers);
+
   const getTrainerName = (trainerId) => {
     const trainer = managers.find((m) => m.id === trainerId);
-    return trainer ? `${trainer.first_name} ${trainer.last_name}` : `Trainer ID: ${trainerId}`;
+    return trainer ? `${trainer.first_name} ${trainer.last_name}` : `${trainerId}`;
   };
 
   const performanceCriteria = [

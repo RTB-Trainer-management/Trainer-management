@@ -139,7 +139,7 @@ const Rtb= () => {
           </button>
           <p className="text-center text-sm mt-4">
             Already registered?{' '}
-            <Link to="/login" className="text-[#1D5FAD] font-semibold hover:underline">
+            <Link to="/user/login" className="text-[#1D5FAD] font-semibold hover:underline">
               Login
             </Link>
           </p>

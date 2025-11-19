@@ -93,9 +93,31 @@ export const schoolManagerApi = apiSlice.injectEndpoints({
       }),
     }),
 
+    createRecruitment: builder.mutation({
+      query: (data) => ({
+        url: `${MANAGER_URL}/recruitments`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Recruitments"],
+    }),
+
+    createPaymentIntent: builder.mutation({
+      query: (data) => ({
+        url: `/payment/create-intent`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    savePaymentRecord: builder.mutation({
+      query: (data) => ({
+        url: `/payment/save-record`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
-
-
 });
 
 export const {
@@ -110,5 +132,8 @@ export const {
   useGetAllRecruitmentsQuery,
   useGetRecruitmentsByStatusQuery,
   useRespondToRecruitmentMutation,
-  useGetUsersPerformanceQuery
+  useGetUsersPerformanceQuery,
+  useCreateRecruitmentMutation,
+  useCreatePaymentIntentMutation,
+  useSavePaymentRecordMutation
 } = schoolManagerApi;

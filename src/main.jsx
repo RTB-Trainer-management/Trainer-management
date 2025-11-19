@@ -23,6 +23,7 @@ import Trainers from './Trainers/Trainers';
 import ManagerDashboard from './School Manager/Dashboard';
 import Performance from './School Manager/Perfomance';
 import Vacant from './Recruitments/Vacant';
+import PostVacancy from './Recruitments/PostVacancy';
 import Trainers2 from './Recruitments/Trainers';
 import Transfers from './Recruitments/Transfers';
 import RequireAuth from './Components/RequireAuth';
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
           <Route index element={<ManagerDashboard />} />
           <Route path='performance' element={<Performance />} />
           <Route path='recruitments/vacant-posts' element={<Vacant />} />
+          <Route path='recruitments/post-vacancy' element={<PostVacancy />} />
           <Route path='recruitments/trainers' element={<Trainers2 />} />
           <Route path='recruitments/transfers' element={<Transfers />} />
         </Route>
